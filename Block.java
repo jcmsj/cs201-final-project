@@ -1,4 +1,3 @@
-package Final;
 
 import java.awt.Color;
 import java.awt.Font;
