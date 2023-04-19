@@ -16,9 +16,9 @@ public class Animator extends JPanel implements KeyListener {
     private final JPanel panel;
     private final LinkedList<ArrayList<Point>> history = new LinkedList<>();
     // `split` Represents the size of subarrays made by MergeSort for split step.
-    private int split; 
+    private int split;
     // Same with `split` but for merge step.
-    private int merge = 1; 
+    private int merge = 1;
     private final Timer timer = new Timer();
 
     public ArrayList<Point> blocksToLocation(Block[] blocks) {
@@ -109,7 +109,7 @@ public class Animator extends JPanel implements KeyListener {
         if (row == null) {
             System.out.println("loop");
             {
-                //Loop animation
+                // Loop animation
                 merge = 1;
                 split = calcSplit(blks);
                 goSplit(blks);
@@ -118,34 +118,27 @@ public class Animator extends JPanel implements KeyListener {
         }
         System.out.println(row);
 
-        /* Move each block every 100ms */
-        final TimerTask t = new TimerTask() {
-            @Override
-            public void run() {
-                int todo = 0;
-                ArrayList<Block> done = new ArrayList<>(blks.length);
-                System.out.println("merge size " + merge);
-                while (todo < blks.length) {
-                    // Split step in the actual merge sort
-                    int offset = Math.min(todo + merge, blks.length);
-                    Block[] left = Arrays.copyOfRange(blocks, todo, offset);
-                    Block[] right = Arrays.copyOfRange(blocks, offset, Math.min(todo + merge * 2, blks.length));
-                    Block[] sorted = new Block[left.length + right.length];
-                    merge(left, right, sorted);
+        int todo = 0;
+        ArrayList<Block> done = new ArrayList<>(blks.length);
+        System.out.println("merge size " + merge);
+        while (todo < blks.length) {
+            // Split step in the actual merge sort
+            int offset = Math.min(todo + merge, blks.length);
+            Block[] left = Arrays.copyOfRange(blocks, todo, offset);
+            Block[] right = Arrays.copyOfRange(blocks, offset, Math.min(todo + merge * 2, blks.length));
+            Block[] sorted = new Block[left.length + right.length];
+            merge(left, right, sorted);
 
-                    // Add `sorted` to the previously sorted parts
-                    for (Block b : sorted) {
-                        done.add(b);
-                    }
-                    todo += sorted.length;
-                }
-
-                merge *= 2; // Increase now
-                syncPos(done, blks, row);
+            // Add `sorted` to the previously sorted parts
+            for (Block b : sorted) {
+                done.add(b);
             }
-        };
+            todo += sorted.length;
+        }
 
-        timer.schedule(t, 100);
+        merge *= 2; // Increase now
+        /* Animate block repositions */
+        syncPos(done, blks, row);
     }
 
     /**
@@ -164,6 +157,7 @@ public class Animator extends JPanel implements KeyListener {
          */
 
         // Timer code is like the above loop
+        // Move each block every 100ms;
         timer.scheduleAtFixedRate(new TimerTask() {
             int i = 0;
 
@@ -171,7 +165,7 @@ public class Animator extends JPanel implements KeyListener {
             public void run() {
                 if (i >= target.length) {
                     this.cancel();
-                    history.removeLast(); //Important: Delete tail when animation ends
+                    history.removeLast(); // Important: Delete tail when animation ends
                     return;
                 }
                 var b = source.get(i);
@@ -179,7 +173,7 @@ public class Animator extends JPanel implements KeyListener {
                 target[i++] = b;
                 Animator.this.repaint();
             }
-        }, 0, 100);
+        }, 0, 50);
     }
 
     public void merge(Block[] left, Block[] right, Block[] target) {
