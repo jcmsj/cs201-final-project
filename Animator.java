@@ -12,14 +12,14 @@ import javax.swing.JPanel;
 
 public class Animator extends JPanel implements KeyListener {
     private final Block[] blocks;
-    private final int baseWidth;
+    private final int moveDistanceX;
     private final JPanel panel;
     private final LinkedList<ArrayList<Point>> history = new LinkedList<>();
-    final int todos;
-    // `split` Represents the size of the subarrays made by MergeSort.
-    int split; // Must do float division
-    int merge = 1;
-    Timer timer = new Timer();
+    // `split` Represents the size of subarrays made by MergeSort for split step.
+    private int split; 
+    // Same with `split` but for merge step.
+    private int merge = 1; 
+    private final Timer timer = new Timer();
 
     public ArrayList<Point> blocksToLocation(Block[] blocks) {
         return Arrays.stream(blocks)
@@ -34,14 +34,14 @@ public class Animator extends JPanel implements KeyListener {
         return history.add(blocksToLocation(blocks));
     }
 
-    Animator(Block[] blocks, int baseWidth, JPanel panel) {
-        this.baseWidth = baseWidth;
+    Animator(Block[] blocks, int moveDistanceX, JPanel panel) {
+        this.moveDistanceX = moveDistanceX;
         this.blocks = blocks;
         this.panel = panel;
-        todos = blocks.length;
         split = calcSplit(blocks);
     }
 
+    // Must do float division
     public int calcSplit(Block[] blks) {
         return (int) Math.round(blks.length / 2.0);
     }
@@ -55,20 +55,12 @@ public class Animator extends JPanel implements KeyListener {
     }
 
     public void move(Block b, boolean right, boolean down, int _split) {
-        int changeX = (int) ((b.getX() + (right ? 1 : -1) * baseWidth * _split));
+        int changeX = (int) ((b.getX() + (right ? 1 : -1) * moveDistanceX * _split));
         int changeY = (int) b.getY() + (down ? 1 : -1) * b.getHeight();
         b.setLocation(changeX, changeY);
         panel.repaint();
     }
 
-    public void swapPlace(Block a, Block b, int bD) {
-        b.setLocation(a.getLocation());
-        move(b, false, false, bD);
-    }
-
-    /*
-     * todo: Record split locations
-     */
     public void goSplit(Block[] blks) {
         snapshot(blks); // Record
         TimerTask task = new TimerTask() {
@@ -78,7 +70,7 @@ public class Animator extends JPanel implements KeyListener {
 
             @Override
             public void run() {
-                if (done < todos) {
+                if (done < blks.length) {
                     // Reset `index` when it reaches `split`
                     if (index >= split) {
                         index = 0;
@@ -90,7 +82,7 @@ public class Animator extends JPanel implements KeyListener {
                 } else {
                     this.cancel(); // Stop
                     System.out.println("split " + split);
-                    split/= 2;
+                    split /= 2;
                 }
             }
         };
@@ -105,81 +97,62 @@ public class Animator extends JPanel implements KeyListener {
         if (e.getKeyCode() != KeyEvent.VK_RIGHT)
             return;
 
-        if (split > 0) { // Split step
+        if (split > 0) {
             goSplit(blocks);
             return;
         }
         goMerge(blocks);
-        System.out.println(history.size());
     }
 
     public void goMerge(Block[] blks) {
         final ArrayList<Point> row = history.peekLast();
         if (row == null) {
-            System.out.println("done");
+            System.out.println("loop");
+            {
+                //Loop animation
+                merge = 1;
+                split = calcSplit(blks);
+                goSplit(blks);
+            }
             return;
         }
         System.out.println(row);
 
         /* Move each block every 100ms */
         final TimerTask t = new TimerTask() {
-            int i = 0;
-
-            /*
-             * Block[] left;
-             * Block[] right;
-             * Block[] target;
-             */
             @Override
             public void run() {
-                // End loop
-                if (i >= blks.length) {
-                    this.cancel();
-                    history.removeLast(); // Delete the row
-
-                    // Repeat animation
-                    if (history.peekLast() == null) {
-                        split = calcSplit(blks);
-                    }
-                    return;
-                }
-
-                // blks[i].setLocation(row.get(i++));
                 int todo = 0;
                 ArrayList<Block> done = new ArrayList<>(blks.length);
                 System.out.println("merge size " + merge);
                 while (todo < blks.length) {
-                    /*
-                     * for (int i = 0; i < merge; i++) {
-                     * }
-                     */
-                    var offset = Math.min(todo + merge, blks.length);
-                    var left = Arrays.copyOfRange(blocks, todo, offset);
-                    var right = Arrays.copyOfRange(blocks, offset, Math.min(todo + merge * 2, blks.length));
-                    var target = new Block[left.length + right.length];
-                    animatedMerge(left, right, target);
-                    for (int j = 0; j < target.length; j++) {
-                        done.add(target[j]);
+                    // Split step in the actual merge sort
+                    int offset = Math.min(todo + merge, blks.length);
+                    Block[] left = Arrays.copyOfRange(blocks, todo, offset);
+                    Block[] right = Arrays.copyOfRange(blocks, offset, Math.min(todo + merge * 2, blks.length));
+                    Block[] sorted = new Block[left.length + right.length];
+                    merge(left, right, sorted);
+
+                    // Add `sorted` to the previously sorted parts
+                    for (Block b : sorted) {
+                        done.add(b);
                     }
-                    todo += target.length;
+                    todo += sorted.length;
                 }
-                merge *= 2;
+
+                merge *= 2; // Increase now
                 syncPos(done, blks, row);
-                /*
-                 * for (int k = 0; k < done.size(); k++) {
-                 * var b = done.get(k);
-                 * b.setLocation(row.get(k));
-                 * blocks[k] = b;
-                 * }
-                 * history.removeLast();
-                 * Animator.this.repaint();
-                 */
             }
         };
 
         timer.schedule(t, 100);
     }
 
+    /**
+     * Repositions each block in `source`
+     * based on the position at an index
+     * then puts each to `target`
+     */
     public void syncPos(ArrayList<Block> source, Block[] target, ArrayList<Point> row) {
         /*
          * for (int i = 0; i < target.length; i++) {
@@ -189,6 +162,8 @@ public class Animator extends JPanel implements KeyListener {
          * Animator.this.repaint();
          * }
          */
+
+        // Timer code is like the above loop
         timer.scheduleAtFixedRate(new TimerTask() {
             int i = 0;
 
@@ -196,7 +171,7 @@ public class Animator extends JPanel implements KeyListener {
             public void run() {
                 if (i >= target.length) {
                     this.cancel();
-                    history.removeLast();
+                    history.removeLast(); //Important: Delete tail when animation ends
                     return;
                 }
                 var b = source.get(i);
@@ -207,34 +182,12 @@ public class Animator extends JPanel implements KeyListener {
         }, 0, 100);
     }
 
-    public void mergeSort(Block[] array) {
-        if (array.length <= 1) {
-            return; // base case
-        }
-
-        final int middle = calcSplit(array);
-        // Split array into two
-        Block[] left = Arrays.copyOfRange(array, 0, middle);
-        Block[] right = Arrays.copyOfRange(array, middle, array.length);
-        mergeSort(left);
-        mergeSort(right);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                animatedMerge(left, right, array);
-            }
-        }, 100);
-    }
-
-    public void animatedMerge(Block[] left, Block[] right, Block[] target) {
+    public void merge(Block[] left, Block[] right, Block[] target) {
         int i = 0, l = 0, r = 0; // indices
         // Check the conditions for merging
+        // Important: Compare value field of blocks
         while (l < left.length && r < right.length) {
-            if (left[l].value < right[r].value) {
-                target[i++] = left[l++];
-            } else {
-                target[i++] = right[r++];
-            }
+            target[i++] = left[l].value < right[r].value ? left[l++] : right[r++];
         }
         // Put the rest
         while (l < left.length) {
@@ -242,45 +195,6 @@ public class Animator extends JPanel implements KeyListener {
         }
         while (r < right.length) {
             target[i++] = right[r++];
-        }
-    }
-
-    public void merge(Block[] left, Block[] right, Block[] target) {
-        int i = 0, l = 0, r = 0; // indices
-        // Check the conditions for merging
-        while (l < left.length && r < right.length) {
-            final var _l = left[l];
-            final var _r = right[r];
-            if (_l == null || _r == null)
-                break;
-
-            if (_l.value < _r.value) {
-                target[i++] = left[l++];
-                move(_l, true, false, (int) (target.length / 0.75));
-                System.out.println("keep " + _l.value);
-            } else {
-                target[i++] = right[r++];
-                swapPlace(_l, _r, (int) (target.length / 0.75));
-                System.out.println("swap " + _r.value);
-            }
-        }
-        // Put the rest
-        while (l < left.length) {
-            final var _l = left[l++];
-            if (_l == null)
-                continue;
-            move(_l, true, false, (int) (target.length / 0.75));
-            System.out.println("add " + _l.value);
-            target[i++] = _l;
-        }
-        while (r < right.length) {
-            final var _r = right[r++];
-            if (_r == null)
-                continue;
-
-            move(_r, false, false, (int) (target.length / 0.75));
-            System.out.println("add " + _r.value);
-            target[i++] = _r;
         }
     }
 

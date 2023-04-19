@@ -2,7 +2,6 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Point;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -13,11 +12,12 @@ import javax.swing.border.EmptyBorder;
 public class Block extends JPanel {
     public final int  value;
     static int side = 15;
-    public Block(Point pos, int value) {
+    public Block(int value) {
         this.setFont(new Font("Arial", Font.BOLD, 20));
-        this.setLocation(pos);
         this.value = value;
         JPanel panel = new JPanel(new GridLayout(1, 1));
+        //panel.setPreferredSize(new Dimension(100, 80));
+
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         JLabel label = new JLabel("" + value);
         label.setFont(new Font("Arial", Font.BOLD, 30));
