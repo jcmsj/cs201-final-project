@@ -20,6 +20,7 @@ public class Animator extends JPanel implements KeyListener {
     // Same with `split` but for merge step.
     private int merge = 1;
     private final Timer timer = new Timer();
+    private int intervalMS = 50; //in ms
 
     public ArrayList<Point> blocksToLocation(Block[] blocks) {
         return Arrays.stream(blocks)
@@ -34,10 +35,11 @@ public class Animator extends JPanel implements KeyListener {
         return history.add(blocksToLocation(blocks));
     }
 
-    Animator(Block[] blocks, int moveDistanceX, JPanel panel) {
+    Animator(Block[] blocks, int moveDistanceX, int intervalMS, JPanel panel) {
         this.moveDistanceX = moveDistanceX;
         this.blocks = blocks;
         this.panel = panel;
+        this.intervalMS = intervalMS;
         split = calcSplit(blocks);
     }
 
@@ -88,7 +90,7 @@ public class Animator extends JPanel implements KeyListener {
         };
 
         // To move a block one at a time, run `task` at an interval.
-        timer.scheduleAtFixedRate(task, 0, 50);
+        timer.scheduleAtFixedRate(task, 0, intervalMS);
     }
 
     @Override
@@ -157,7 +159,7 @@ public class Animator extends JPanel implements KeyListener {
          */
 
         // Timer code is like the above loop
-        // Move each block every 100ms;
+        // Move each block every at a certain interval;
         timer.scheduleAtFixedRate(new TimerTask() {
             int i = 0;
 
@@ -173,7 +175,7 @@ public class Animator extends JPanel implements KeyListener {
                 target[i++] = b;
                 Animator.this.repaint();
             }
-        }, 0, 50);
+        }, 0, intervalMS);
     }
 
     public void merge(Block[] left, Block[] right, Block[] target) {

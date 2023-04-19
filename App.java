@@ -51,6 +51,6 @@ public class App {
         final var blocks = addSampleBlocks(panel);
         frame.getContentPane().add(panel);
         frame.setVisible(true);
-        panel.addKeyListener(new Animator(blocks, 15, panel));
+        panel.addKeyListener(new Animator(blocks, 15, 50, panel));
     }
 }
