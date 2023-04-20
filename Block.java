@@ -24,4 +24,11 @@ public class Block extends JPanel {
         panel.add(label);
         this.add(panel);
     }
+
+    /**
+     * For debugging
+     */
+    public String toString() {
+        return "" + this.value + " " + this.getLocation();
+    }
 }

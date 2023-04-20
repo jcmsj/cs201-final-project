@@ -1,11 +1,9 @@
 import java.awt.Color;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 public class App {
 
-    public static Block[] addSampleBlocks(JPanel j) {
+    public static Block[] createSampleBlocks() {
         // odd size 7
         //int[] ints = { 4, 1, 3, 2, 6, 9, 10 };
         // odd size 11
@@ -22,7 +20,6 @@ public class App {
         for (int i = 0; i < ints.length; i++) {
             blocks[i] = new Block(ints[i]);
             blocks[i].setBackground(color);
-            j.add(blocks[i]);
         }
 
         return blocks;
@@ -44,13 +41,10 @@ public class App {
         // Maximize screen
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         // TODO: User input
-        final JPanel panel = new JPanel();
-        panel.setFocusable(true);
-        panel.setBorder(new EmptyBorder(30, 30, 30, 30));
         // Create blocks
-        final var blocks = addSampleBlocks(panel);
-        frame.getContentPane().add(panel);
+        final var blocks = createSampleBlocks();
+        final var animator = new Animator(blocks, 15, 50);
+        frame.getContentPane().add(animator);
         frame.setVisible(true);
-        panel.addKeyListener(new Animator(blocks, 15, 50, panel));
     }
 }

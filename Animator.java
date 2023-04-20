@@ -9,19 +9,20 @@ import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 public class Animator extends JPanel implements KeyListener {
     private final Block[] blocks;
     private final int moveDistanceX;
-    private final JPanel panel;
     private final LinkedList<ArrayList<Point>> history = new LinkedList<>();
     // `split` Represents the size of subarrays made by MergeSort for split step.
     private int split;
     // Same with `split` but for merge step.
     private int merge = 1;
     private final Timer timer = new Timer();
-    private int intervalMS = 50; //in ms
+    private int intervalMS = 50; // in ms
     private boolean animating = false;
+
     public ArrayList<Point> blocksToLocation(Block[] blocks) {
         return Arrays.stream(blocks)
                 .map(b -> b.getLocation())
@@ -35,17 +36,32 @@ public class Animator extends JPanel implements KeyListener {
         return history.add(blocksToLocation(blocks));
     }
 
-    Animator(Block[] blocks, int moveDistanceX, int intervalMS, JPanel panel) {
+    Animator(Block[] blocks, int moveDistanceX, int intervalMS) {
+        setBorder(new EmptyBorder(30, 30, 30, 30));
+        setFocusable(true);
+        setVisible(true);
+        addKeyListener(this);
+        for (var b : blocks) {
+            add(b);
+        }
         this.moveDistanceX = moveDistanceX;
         this.blocks = blocks;
-        this.panel = panel;
         this.intervalMS = intervalMS;
-        split = calcSplit(blocks);
+        split = calcSplit();
     }
 
-    // Must do float division
-    public int calcSplit(Block[] blks) {
-        return (int) Math.round(blks.length / 2.0);
+    public int calcSplit() {
+        return calcSplit(blocks.length);
+    }
+
+    /**
+     * Must round the float division for correct splitting.
+     * where the higher count is in the left side
+     * E.g. for 5 elements
+     * it should be split into 3 2 not 2 3
+     */
+    public int calcSplit(int n) {
+        return (int) Math.round(n / 2.0);
     }
 
     public void move(Block b, boolean right) {
@@ -60,7 +76,7 @@ public class Animator extends JPanel implements KeyListener {
         int changeX = (int) ((b.getX() + (right ? 1 : -1) * moveDistanceX * _split));
         int changeY = (int) b.getY() + (down ? 1 : -1) * b.getHeight();
         b.setLocation(changeX, changeY);
-        panel.repaint();
+        repaint();
     }
 
     public void goSplit(Block[] blks) {
@@ -84,7 +100,8 @@ public class Animator extends JPanel implements KeyListener {
                 } else {
                     this.cancel(); // Stop
                     System.out.println("split " + split);
-                    split /= 2;
+                    // When last split, set it to 0
+                    split = split == 1 ? 0 : calcSplit(split);
                     animating = false;
                 }
             }
@@ -97,7 +114,7 @@ public class Animator extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         // Activate by pressing right arrow key
-        if (animating || e.getKeyCode() != KeyEvent.VK_RIGHT )
+        if (animating || e.getKeyCode() != KeyEvent.VK_RIGHT)
             return;
 
         animating = true;
@@ -109,14 +126,19 @@ public class Animator extends JPanel implements KeyListener {
         goMerge(blocks);
     }
 
+    public void reset() {
+        merge = 1;
+        split = calcSplit();
+    }
+
     public void goMerge(Block[] blks) {
         final ArrayList<Point> row = history.peekLast();
         if (row == null) {
+
             System.out.println("loop");
             {
                 // Loop animation
-                merge = 1;
-                split = calcSplit(blks);
+                reset();
                 goSplit(blks);
             }
             return;
@@ -129,8 +151,16 @@ public class Animator extends JPanel implements KeyListener {
         while (todo < blks.length) {
             // Split step in the actual merge sort
             int offset = Math.min(todo + merge, blks.length);
+            System.out.println(offset);
             Block[] left = Arrays.copyOfRange(blocks, todo, offset);
-            Block[] right = Arrays.copyOfRange(blocks, offset, Math.min(todo + merge * 2, blks.length));
+            Block[] right = Arrays.copyOfRange(blocks, offset, Math.min(offset + merge, blks.length));
+            for (var b : left) {
+                System.out.println(b);
+            }
+            System.out.println("");
+            for (var b : right) {
+                System.out.println(b);
+            }
             Block[] sorted = new Block[left.length + right.length];
             merge(left, right, sorted);
 
