@@ -21,7 +21,7 @@ public class Animator extends JPanel implements KeyListener {
     private int merge = 1;
     private final Timer timer = new Timer();
     private int intervalMS = 50; //in ms
-
+    private boolean animating = false;
     public ArrayList<Point> blocksToLocation(Block[] blocks) {
         return Arrays.stream(blocks)
                 .map(b -> b.getLocation())
@@ -85,6 +85,7 @@ public class Animator extends JPanel implements KeyListener {
                     this.cancel(); // Stop
                     System.out.println("split " + split);
                     split /= 2;
+                    animating = false;
                 }
             }
         };
@@ -96,8 +97,10 @@ public class Animator extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         // Activate by pressing right arrow key
-        if (e.getKeyCode() != KeyEvent.VK_RIGHT)
+        if (animating || e.getKeyCode() != KeyEvent.VK_RIGHT )
             return;
+
+        animating = true;
 
         if (split > 0) {
             goSplit(blocks);
@@ -168,9 +171,10 @@ public class Animator extends JPanel implements KeyListener {
                 if (i >= target.length) {
                     this.cancel();
                     history.removeLast(); // Important: Delete tail when animation ends
+                    animating = false;
                     return;
                 }
-                var b = source.get(i);
+                final Block b = source.get(i);
                 b.setLocation(row.get(i));
                 target[i++] = b;
                 Animator.this.repaint();
