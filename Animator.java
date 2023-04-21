@@ -3,7 +3,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EmptyStackException;
 import java.util.LinkedList;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
@@ -14,16 +16,13 @@ import javax.swing.border.EmptyBorder;
 public class Animator extends JPanel implements KeyListener {
     private final Block[] blocks;
     private final int moveDistanceX;
-    private final LinkedList<ArrayList<Point>> history = new LinkedList<>();
-    // `split` Represents the size of subarrays made by MergeSort for split step.
-    private int split;
-    // Same with `split` but for merge step.
-    private int merge = 1;
+    private final Stack<ArrayList<Point>> history = new Stack<>();
     private final Timer timer = new Timer();
     private int intervalMS = 50; // in ms
     private boolean animating = false;
+    private int count = 0;
 
-    public ArrayList<Point> blocksToLocation(Block[] blocks) {
+    public static ArrayList<Point> blocksToLocation(Block[] blocks) {
         return Arrays.stream(blocks)
                 .map(b -> b.getLocation())
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -33,7 +32,13 @@ public class Animator extends JPanel implements KeyListener {
      * Records the current location of all blocks
      */
     public boolean snapshot(Block[] blocks) {
-        return history.add(blocksToLocation(blocks));
+        var res = history.add(blocksToLocation(blocks));
+        ArrayList<Block> r = new ArrayList<>();
+        for (var b : blocks) {
+            r.add(b);
+        }
+        processed.add(r);
+        return res;
     }
 
     Animator(Block[] blocks, int moveDistanceX, int intervalMS) {
@@ -47,7 +52,7 @@ public class Animator extends JPanel implements KeyListener {
         this.moveDistanceX = moveDistanceX;
         this.blocks = blocks;
         this.intervalMS = intervalMS;
-        split = calcSplit();
+        queue.push(() -> goSplit(blocks, null));
     }
 
     public int calcSplit() {
@@ -65,115 +70,149 @@ public class Animator extends JPanel implements KeyListener {
     }
 
     public void move(Block b, boolean right) {
-        move(b, right, true);
+        move(b, right, true, 1);
     }
 
-    public void move(Block b, boolean right, boolean down) {
-        move(b, right, down, split);
-    }
-
-    public void move(Block b, boolean right, boolean down, int _split) {
-        int changeX = (int) ((b.getX() + (right ? 1 : -1) * moveDistanceX * _split));
+    public void move(Block b, boolean right, boolean down, int xModifier) {
+        int changeX = (int) ((b.getX() + (right ? 1 : -1) * moveDistanceX * xModifier));
         int changeY = (int) b.getY() + (down ? 1 : -1) * b.getHeight();
         b.setLocation(changeX, changeY);
         repaint();
     }
 
-    public void goSplit(Block[] blks) {
-        snapshot(blks); // Record
-        TimerTask task = new TimerTask() {
-            int done = 0;
-            int index = 0;
-            boolean right = false;
-
-            @Override
-            public void run() {
-                if (done < blks.length) {
-                    // Reset `index` when it reaches `split`
-                    if (index >= split) {
-                        index = 0;
-                        // Also negate the direction to move the newly split blocks away from each other
-                        right = !right;
-                    }
-                    move(blks[done++], right);
-                    index++;
-                } else {
-                    this.cancel(); // Stop
-                    System.out.println("split " + split);
-                    // When last split, set it to 0
-                    split = split == 1 ? 0 : calcSplit(split);
-                    animating = false;
-                }
-            }
-        };
-
-        // To move a block one at a time, run `task` at an interval.
-        timer.scheduleAtFixedRate(task, 0, intervalMS);
-    }
-
     @Override
     public void keyPressed(KeyEvent e) {
         // Activate by pressing right arrow key
-        if (animating || e.getKeyCode() != KeyEvent.VK_RIGHT)
+        if (e.getKeyCode() != KeyEvent.VK_RIGHT) {
             return;
+        }
+        if (animating) {
+            System.out.println("Already animating!");
+            return;
+        }
 
         animating = true;
 
-        if (split > 0) {
-            goSplit(blocks);
+        if (queue.peek() == null) {
+            System.out.println("merging...");
+            goMerge();
             return;
         }
-        goMerge(blocks);
+        Runnable r = queue.poll();
+        while (r != null) {
+            r.run();
+            r = queue.poll();
+        }
+
     }
+    public LinkedList<Runnable> mergeQueue = new LinkedList<>();
 
-    public void reset() {
-        merge = 1;
-        split = calcSplit();
-    }
+    public void animMove(Block[] side, boolean right, Runnable whenDone) {
+        ArrayList<Point> r = new ArrayList<>();
+        count += side.length;
+        snapshot(side);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            int i = 0;
 
-    public void goMerge(Block[] blks) {
-        final ArrayList<Point> row = history.peekLast();
-        if (row == null) {
-
-            System.out.println("loop");
-            {
-                // Loop animation
-                reset();
-                goSplit(blks);
+            @Override
+            public void run() {
+                if (i >= side.length) {
+                    this.cancel();
+                    return;
+                }
+                // System.out.println(right + " " + side[i]);
+                r.add(side[i].getLocation());
+                move(side[i++], right, true, side.length);
             }
+
+            @Override
+            public boolean cancel() {
+                if (whenDone != null)
+                    whenDone.run();
+                return super.cancel();
+            }
+        }, 0, intervalMS);
+    }
+
+    public Stack<ArrayList<Block>> processed = new Stack<>();
+
+    public LinkedList<Runnable> queue = new LinkedList<>();
+
+    public void goSplit(Block[] blks, Runnable whenDone) {
+        if (blks.length == 1) {
+            animating = false;
+            queue.pollLast();
             return;
         }
-        System.out.println(row);
-
-        int todo = 0;
-        ArrayList<Block> done = new ArrayList<>(blks.length);
-        System.out.println("merge size " + merge);
-        while (todo < blks.length) {
-            // Split step in the actual merge sort
-            int offset = Math.min(todo + merge, blks.length);
-            System.out.println(offset);
-            Block[] left = Arrays.copyOfRange(blocks, todo, offset);
-            Block[] right = Arrays.copyOfRange(blocks, offset, Math.min(offset + merge, blks.length));
-            for (var b : left) {
-                System.out.println(b);
-            }
-            System.out.println("");
-            for (var b : right) {
-                System.out.println(b);
-            }
+        // Split step in the actual merge sort
+        int mid = calcSplit(blks.length);
+        System.out.println("split by " + mid);
+        Block[] left = Arrays.copyOfRange(blks, 0, mid);
+        Block[] right = Arrays.copyOfRange(blks, mid, blks.length);
+        mergeQueue.add(() -> {
             Block[] sorted = new Block[left.length + right.length];
             merge(left, right, sorted);
+        });
+        /*
+         * ArrayList<Block> p = new ArrayList<>(blks.length);
+         * for (var b : blks) {
+         * p.add(b);
+         * }
+         * 
+         * processed.add(p);
+         */
+        // Animate left blocks
+        animMove(left, false, () -> {
+            // Then animate right blocks
+            animMove(right, true, () -> {
+                // Prepare next split
+                queue.add(
+                        () -> goSplit(left,
+                                () -> goSplit(right, null)));
 
-            // Add `sorted` to the previously sorted parts
-            for (Block b : sorted) {
-                done.add(b);
+                animating = false;
+                if (whenDone != null) {
+                    whenDone.run();
+                }
+            });
+        });
+
+    }
+
+    public void goMerge() {
+        int todo = count % blocks.length;
+        ArrayList<Block> done = new ArrayList<>(blocks.length);
+        ArrayList<Point> row = new ArrayList<>();
+        System.out.println("Moves: " + count);
+        while (todo > 0) {
+            try {
+                ArrayList<Point> part = history.pop();
+                ArrayList<Block> p = processed.pop();
+                todo -= part.size();
+                System.out.println("Points= " + part.size() + " Blocks=" + p.size());
+                done.addAll(p);
+                row.addAll(part);
+            } catch (EmptyStackException e) {
+                System.out.println("Looping...");
+                // RESET
+                history.clear();
+                processed.clear();
+                mergeQueue.clear();
+                count = 0;
+                animating = false;
+                goSplit(blocks, null);
+                return;
             }
-            todo += sorted.length;
+        }
+        Runnable r = mergeQueue.pollFirst();
+        if (r != null) {
+            r.run();
         }
 
-        merge *= 2; // Increase now
-        /* Animate block repositions */
-        syncPos(done, blks, row);
+        if (done.size() > 0) {
+            syncPos(done, blocks, row);
+        }
+        animating = false;
     }
 
     /**
@@ -197,14 +236,23 @@ public class Animator extends JPanel implements KeyListener {
             int i = 0;
 
             @Override
+            public boolean cancel() {
+                // history.pop(); // Important: Delete tail when animation ends
+                animating = false;
+                return super.cancel();
+            }
+
+            @Override
             public void run() {
-                if (i >= target.length) {
+                if (i >= source.size()) {
                     this.cancel();
-                    history.removeLast(); // Important: Delete tail when animation ends
-                    animating = false;
                     return;
                 }
                 final Block b = source.get(i);
+                if (b == null) {
+                    // uh oh
+                    return;
+                }
                 b.setLocation(row.get(i));
                 target[i++] = b;
                 Animator.this.repaint();
