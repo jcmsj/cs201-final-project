@@ -1,4 +1,3 @@
-import java.awt.Color;
 import javax.swing.JFrame;
 
 import Style.Style;
@@ -18,10 +17,8 @@ public class App {
 
         // TODO: Prevent collissions by matching width of components to the widest
         // sibling
-        final var color = new Color(10, 50, 50, 64);
         for (int i = 0; i < ints.length; i++) {
             blocks[i] = new Block(ints[i]);
-            blocks[i].setBackground(color);
         }
 
         return blocks;
