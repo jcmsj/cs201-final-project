@@ -1,17 +1,19 @@
 import java.awt.Color;
 import javax.swing.JFrame;
 
+import Style.Style;
+
 public class App {
 
     public static Block[] createSampleBlocks() {
         // odd size 7
-        //int[] ints = { 4, 1, 3, 2, 6, 9, 10 };
+        // int[] ints = { 4, 1, 3, 2, 6, 9, 10 };
         // odd size 11
-        int[] ints = { 4, 1, 3, 11,2, 6, 0, 9, 10 };
+        int[] ints = { 4, 1, 3, 11, 2, 6, 0, 9, 10 };
         // even size
         // int[] ints = { 4, 1, 3, 2, 6, 9, 0, 5 };
         // many
-        //int[] ints = { 4, 1, 27, 3, 2, 19, 6, 9, 36, 0, 5, 17,13, 15, 18, 35 };
+        // int[] ints = { 4, 1, 27, 3, 2, 19, 6, 9, 36, 0, 5, 17,13, 15, 18, 35 };
         Block[] blocks = new Block[ints.length];
 
         // TODO: Prevent collissions by matching width of components to the widest
@@ -36,6 +38,7 @@ public class App {
     }
 
     public static void main(String[] args) {
+        Style.init();
         final JFrame frame = new JFrame("Merge Sort Visualizer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Maximize screen
