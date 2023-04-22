@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -14,8 +13,8 @@ import Style.Style;
 /* A movable block with a number */
 public class Block extends JPanel {
     public final int  value;
-    static int side = 15;
-    static Image image = new ImageIcon("./assets/block.png").getImage(); 
+    static final int side = 15;
+    static final Image image = new ImageIcon("./assets/block.png").getImage(); 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -30,7 +29,8 @@ public class Block extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         JLabel label = new JLabel("" + value);
-        label.setFont(new Font("Alagard", Font.PLAIN, 40));
+        //Resize font to 40;
+        label.setFont(getFont().deriveFont(40f));
         label.setForeground(Style.reddish);
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setBorder(new EmptyBorder(side, side, side, side));
@@ -43,5 +43,40 @@ public class Block extends JPanel {
      */
     public String toString() {
         return "" + this.value + " " + this.getLocation();
+    }
+
+    /**
+     * Creates a new `Block` with the same value.
+     * @implNote does not keep other state (E.g. position) unlike with {@link Object#clone}
+     */
+    public Block dup() {
+        return new Block(value);
+    }
+
+    /**
+     * Similar to {@link java.util.Arrays#copyOfRange} but uses {@link Block#dup}
+     * @see Block#dup
+     */
+    public static Block[] copyOfRange(Block[] original, int from, int to) throws IllegalArgumentException {
+        int newLength = to - from;
+        if (newLength < 0)
+            throw new IllegalArgumentException(from + " > " + to);
+
+        newLength = Math.min(original.length - from, newLength);
+        Block[] copy = new Block[newLength];
+        
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = original[i].dup();
+        }
+
+        return copy;
+    }
+
+    public static Block[] copy(Block[] blocks) {
+        var copy = new Block[blocks.length];
+        for (int i = 0; i < blocks.length; i++) {
+            copy[i] = blocks[i].dup();
+        }
+        return copy;
     }
 }
