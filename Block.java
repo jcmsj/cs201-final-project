@@ -30,7 +30,7 @@ public class Block extends JPanel {
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         JLabel label = new JLabel("" + value);
         //Resize font to 40;
-        label.setFont(getFont().deriveFont(40f));
+        label.setFont(getFont().deriveFont(35f));
         label.setForeground(Style.reddish);
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setBorder(new EmptyBorder(side, side, side, side));
