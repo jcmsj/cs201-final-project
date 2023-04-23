@@ -42,7 +42,7 @@ public class Block extends JPanel {
      * For debugging
      */
     public String toString() {
-        return "" + this.value + " " + this.getLocation();
+        return "(v=" + value + ", x=" + getX() + ", y=" + getY() + ")";
     }
 
     /**
@@ -65,7 +65,7 @@ public class Block extends JPanel {
         newLength = Math.min(original.length - from, newLength);
         Block[] copy = new Block[newLength];
         
-        for (int i = 0; i < copy.length; i++) {
+        for (int i = 0; i < newLength; i++) {
             copy[i] = original[i].dup();
         }
 
