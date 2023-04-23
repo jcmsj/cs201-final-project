@@ -31,10 +31,13 @@ public class Director extends JPanel {
     }
 
     /**
-     * div by 2 but change 0 to 1
+     * 1. Div by 2 but change 0 to 1.
+     * 2. Must round the float division for correct splitting
+     * where the higher count is on the left side
+     * E.g. for 5 elements, it should be split into 3 2 not 2 3
      */
     public int calcSplit(int n) {
-        return Math.max(n / 2, 1);
+        return Math.max((int) Math.round(n / 2.0), 1);
     }
 
     public void animRow(Row r, Runnable onEnd) {
@@ -119,6 +122,7 @@ public class Director extends JPanel {
     }
 
     boolean skipMid = true;
+
     public void mergeSort() {
         if (shouldMerge) {
             if (skipMid) {

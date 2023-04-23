@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JPanel;
+
 /**
  * Layouts Block components in a Row and adds dividers at intervals based on
  * when split is set to 0, no dividers are added.
@@ -12,9 +13,11 @@ import javax.swing.JPanel;
  */
 public class Row extends JPanel {
     public static final int X_GAP = 10;
-    //public final int split;
+    // public final int split;
     public final Block[] blocks;
-    private int index = 0;
+    private int index = 0; // Determines which block would be painted
+    private int counter = 1; // Determines when to place dividers
+
     private LinkedList<Component> dividers = new LinkedList<>();
 
     public int getIndex() {
@@ -35,16 +38,29 @@ public class Row extends JPanel {
         setLayout(new FlowLayout(FlowLayout.CENTER));
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         this.xGAP = xGAP;
+        // Filter negative values
         splits.removeIf(it -> it < 0);
-        /* if (split < 0) {
-            throw new IllegalArgumentException("split must be nonnegative but got " + split);
-        } */
-        // Duplicate blocks
         this.blocks = Block.copy(blocks);
-        // Starts at 1 for easier comparison
-        //System.out.println("Split by " + split);
     }
-    int counter = 1;
+
+    /**
+     * Creates a Row with the {@link Row#X_GAP} as {@link Row#xGAP}
+     */
+    public Row(Block[] blocks, int split) {
+        this(blocks, fill(split, blocks.length), Row.X_GAP);
+    }
+
+    public Row(Block[] blocks, LinkedList<Integer> splits) {
+        this(blocks, splits, Row.X_GAP);
+    }
+
+    /**
+     * Creates a Row without dividers and default {@link Row#xGAP}
+     */
+    public Row(Block[] blocks) {
+        this(blocks, new LinkedList<>(), Row.X_GAP);
+    }
+
     /**
      * @return whether a block was newly painted
      */
@@ -54,16 +70,16 @@ public class Row extends JPanel {
 
         add(blocks[index]);
         // add divider
-        // 2nd clause skips adding a divider after last item.
+        // last clause skips adding a divider after last item.
         Integer last = splits.peekFirst();
         if (last != null
-            && counter == last
-            && blocks.length != index) {
+                && counter == last
+                && blocks.length != index) {
             System.out.println("split at i=" + index);
             splits.removeFirst();
             addDivider();
             counter = 0;
-        } 
+        }
         revalidate();
         counter++;
         index++;
@@ -78,7 +94,13 @@ public class Row extends JPanel {
             return false;
 
         // Remove divider if exists
-        if ((index == splits.removeLast()&& blocks.length != index)) {
+        Integer last = splits.peekFirst();
+        if (last != null
+                && counter == last
+                && blocks.length != index) {
+            System.out.println("split at i=" + index);
+        }
+        if ((index == splits.removeLast() && blocks.length != index)) {
             remove(dividers.pop());
         }
         remove(blocks[index--]);
@@ -98,16 +120,6 @@ public class Row extends JPanel {
         return d;
     }
 
-    /**
-     * Creates a Row with the {@link Row#X_GAP} as {@link Row#xGAP}
-     */
-    public Row(Block[] blocks, int split) {
-        this(blocks, fill(split, blocks.length), Row.X_GAP);
-    }
-
-    public Row(Block[] blocks, LinkedList<Integer> splits) {
-        this(blocks, splits, Row.X_GAP);
-    }
     public static LinkedList<Integer> fill(Integer n, int size) {
         LinkedList<Integer> r = new LinkedList<>();
         for (; size > 0; size--) {
@@ -115,13 +127,4 @@ public class Row extends JPanel {
         }
         return r;
     }
-
-    /**
-     * Creates a Row without dividers and default {@link Row#xGAP}
-     */
-    public Row(Block[] blocks) {
-        this(blocks, new LinkedList<>(), Row.X_GAP);
-    }
-
-
 }
