@@ -4,10 +4,7 @@ import java.awt.FlowLayout;
 import java.util.LinkedList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import Style.Style;
-
 /**
  * Layouts Block components in a Row and adds dividers at intervals based on
  * when split is set to 0, no dividers are added.
@@ -126,16 +123,5 @@ public class Row extends JPanel {
         this(blocks, new LinkedList<>(), Row.X_GAP);
     }
 
-    public static void main(String[] args) {
-        Style.init();
-        final JFrame frame = new JFrame("Merge Sort Visualizer by 4Amigos");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Maximize screen
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        final var director = new Director(App.createSampleBlocks());
-        frame.add(director);
-        java.awt.EventQueue.invokeLater(() -> {
-            frame.setVisible(true);
-        });
-    }
+
 }
