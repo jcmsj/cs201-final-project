@@ -31,13 +31,10 @@ public class Director extends JPanel {
     }
 
     /**
-     * 1. Div by 2 but change 0 to 1.
-     * 2. Must round the float division for correct splitting
-     * where the higher count is on the left side
-     * E.g. for 5 elements, it should be split into 3 2 not 2 3
+     * Div by 2 but change 0 to 1.
      */
     public int calcSplit(int n) {
-        return Math.max(n/2, 1);
+        return Math.max(n / 2, 1);
     }
 
     public void animRow(Row r, Runnable onEnd) {
@@ -150,17 +147,32 @@ public class Director extends JPanel {
         LinkedList<Integer> indices = new LinkedList<>();
         var last = history.peekLast();
         if (last == null) {
-            indices = Row.fill(blocks.length, 1); // returns [size]
+            // return [size]
+            indices = Row.fill(blocks.length, 1);
         } else if (last.stream().allMatch(t -> t == 2) || exactlyOne(last, 1)) {
+            /*
+             * 2nd to the last split check
+             * when array is odd-sized, need to check if the last point in history has
+             * exactly one element with the value 1.
+             * For even case, check if all are 2s
+             */
+
+            // Last split state is simple, every element is in a one-sized array
             indices = Row.fill(1, blocks.length);
             shouldMerge = true;
         } else {
-            // returns size with the remainders added
-            // E.g. split [9] becomes [4,5]
-            // E.g. split [4,5] becomes [2,2] [2,3]
+            /*
+             * returns size with the remainders added
+             * E.g. split [9] becomes [4,5]
+             * E.g. split [4,5] becomes [2,2] [2,3]
+             * to do that here, further split the last list of splits done
+             */
             last = dup(last);
+            
             Integer target = last.peekFirst();
             while (target != null) {
+                // For odd-sized elements, there'd always be a case where the target becomes 3.
+                // add 2 & 3 if so.
                 if (target == 3) {
                     indices.add(2);
                     indices.add(1);
@@ -170,11 +182,11 @@ public class Director extends JPanel {
                     System.out.println("Split by " + n);
                     while (i <= target) {
                         int x = n;
-                        //At the last iteration, there may be a leftover element. So add that
+                        // At the last iteration, there may be a leftover element. So add that
                         if (i + 1 == target) {
                             x++;
                         }
-                        //Add `x` not the index `i`, Row.java handles the indexing for us
+                        // Add `x` not the index `i`, Row.java handles the indexing for us
                         indices.add(x);
                         i += x;
                     }

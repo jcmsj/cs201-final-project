@@ -12,6 +12,7 @@ import Style.Style;
 
 /* A movable block with a number */
 public class Block extends JPanel {
+    public static final float DEFAULT_FONT_SIZE = 30f;
     public final int  value;
     static final int side = 15;
     static final Image image = new ImageIcon("./assets/block.png").getImage(); 
@@ -24,20 +25,23 @@ public class Block extends JPanel {
         }
     }
     public Block(int value) {
+        this(value, DEFAULT_FONT_SIZE);
+    }
+
+    public Block(int value, float fontSize) {
         this.value = value;
         JPanel panel = new JPanel(new GridLayout(1, 1));
         panel.setOpaque(false);
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         JLabel label = new JLabel("" + value);
         //Resize font to 40;
-        label.setFont(getFont().deriveFont(35f));
+        label.setFont(getFont().deriveFont(fontSize));
         label.setForeground(Style.reddish);
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setBorder(new EmptyBorder(side, side, side, side));
         panel.add(label);
         add(panel);
     }
-
     /**
      * For debugging
      */
