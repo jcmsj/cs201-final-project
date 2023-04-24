@@ -36,7 +36,6 @@ public class Row extends JPanel {
     public Row(Block[] blocks, LinkedList<Integer> splits, int xGAP) {
         this.splits = splits;
         setLayout(new FlowLayout(FlowLayout.CENTER));
-        setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         this.xGAP = xGAP;
         // Filter negative values
         splits.removeIf(it -> it < 0);

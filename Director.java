@@ -37,7 +37,7 @@ public class Director extends JPanel {
      * E.g. for 5 elements, it should be split into 3 2 not 2 3
      */
     public int calcSplit(int n) {
-        return Math.max((int) Math.round(n / 2.0), 1);
+        return Math.max(n/2, 1);
     }
 
     public void animRow(Row r, Runnable onEnd) {
@@ -70,13 +70,6 @@ public class Director extends JPanel {
             Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
             Block[] sorted = new Block[left.length + right.length];
             merge(left, right, sorted);
-            /*
-             * System.out.println(
-             * "Left:\n" + Arrays.toString(left)
-             * + "\nRight:\n" + Arrays.toString(right)
-             * + "\nSorted:\n" + Arrays.toString(sorted)
-             * );
-             */
             // Add `sorted` to the previously sorted parts
             for (Block b : sorted) {
                 // Important: duplicate block
@@ -90,12 +83,7 @@ public class Director extends JPanel {
             blocks[i] = done.get(i);
         }
         split *= 2; // Increase now
-        var last = history.peekLast();
-        if (last == null)
-            return;
-
-        final Row r = new Row(blocks, last);
-        history.removeLast();
+        final Row r = new Row(blocks, split);
         add(r);
         animRow(r, null);
     }
@@ -162,7 +150,7 @@ public class Director extends JPanel {
         LinkedList<Integer> indices = new LinkedList<>();
         var last = history.peekLast();
         if (last == null) {
-            indices = Row.fill(split, 1); // returns [size]
+            indices = Row.fill(blocks.length, 1); // returns [size]
         } else if (last.stream().allMatch(t -> t == 2) || exactlyOne(last, 1)) {
             indices = Row.fill(1, blocks.length);
             shouldMerge = true;
@@ -182,9 +170,11 @@ public class Director extends JPanel {
                     System.out.println("Split by " + n);
                     while (i <= target) {
                         int x = n;
+                        //At the last iteration, there may be a leftover element. So add that
                         if (i + 1 == target) {
                             x++;
                         }
+                        //Add `x` not the index `i`, Row.java handles the indexing for us
                         indices.add(x);
                         i += x;
                     }
