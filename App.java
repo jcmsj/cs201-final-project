@@ -1,8 +1,13 @@
 import javax.swing.JFrame;
-
 import Style.Style;
 
-public class App {
+public class App extends JFrame {
+    public App() {
+        super("Merge Sort Visualizer by 4Amigos");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Maximize screen
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+    }
     public static Block[] createSampleBlocks() {
         // odd size 7
         int[] ints = { 4, 1, 3, 2, 6, 9, 10 };
@@ -23,14 +28,11 @@ public class App {
 
     public static void main(String[] args) {
         Style.init();
-        final JFrame frame = new JFrame("Merge Sort Visualizer by 4Amigos");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Maximize screen
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        final App app = new App();
         final var director = new Director(App.createSampleBlocks());
-        frame.add(director);
+        app.add(director);
         java.awt.EventQueue.invokeLater(() -> {
-            frame.setVisible(true);
+            app.setVisible(true);
         });
     }
 }
