@@ -9,26 +9,20 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Style.Style;
+import util.KPanel;
 
 /* A movable block with a number */
-public class Block extends JPanel {
+public class Block extends KPanel {
     public static final float DEFAULT_FONT_SIZE = 30f;
     public final int  value;
     static final int side = 15;
-    static final Image image = new ImageIcon("./assets/block.png").getImage(); 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (image != null)
-        {
-            g.drawImage(image,0,0,getWidth(),getHeight(),this);
-        }
-    }
+
     public Block(int value) {
         this(value, DEFAULT_FONT_SIZE);
     }
 
     public Block(int value, float fontSize) {
+        super("./assets/block.png");
         this.value = value;
         JPanel panel = new JPanel(new GridLayout(1, 1));
         panel.setOpaque(false);
