@@ -5,20 +5,23 @@ import java.util.LinkedList;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import Style.Style;
 import util.Animator;
+import util.KPanel;
 
 public class Director extends JPanel {
     private final Block[] blocks;
     public final Animator anim = new Animator();
 
     public Director(Block[] blocks) {
+        //super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(30, 30, 30, 30));
         setFocusable(true);
+        setBackground(Style.wine);
         setVisible(true);
         this.blocks = blocks;
-        split = blocks.length;
         // Activate by pressing right arrow key
         anim.onPress(
                 KeyEvent.VK_RIGHT,
@@ -49,12 +52,23 @@ public class Director extends JPanel {
         }, anim.interval);
     }
 
-    int split;
+    int split = 0;
     boolean shouldMerge = false;
 
     public void mergeStep() {
-        if (split <= 0) {
+        if (split > blocks.length)
+            return;
+
+        if (split < 0) {
             throw new IllegalArgumentException("split must be > 0, but got " + split);
+        }
+
+        if (split == 0) {
+            final Row r = new Row(blocks, 1);
+            add(r);
+            animRow(r, null);
+            split = 1;
+            return;
         }
         System.out.println("Merge by " + split);
         ArrayList<Block> done = new ArrayList<>(blocks.length);
@@ -109,16 +123,7 @@ public class Director extends JPanel {
     boolean skipMid = true;
 
     public void mergeSort() {
-        if (shouldMerge) {
-            if (skipMid) {
-                history.removeLast();
-                skipMid = false;
-            }
-            mergeStep();
-            return;
-        }
-        // Merge step starts next call
-        splitStep();
+        mergeStep();
     }
 
     /**

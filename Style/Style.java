@@ -11,19 +11,28 @@ import javax.swing.UIManager;
 
 public class Style {
     /* Put colors as static members here */
-    public final static Color reddish =  Color.decode("#FED37F");
+    public final static Color reddish = Color.decode("#FED37F");
+    public final static Color wine = Color.decode("#722F37");
+    public static Font alagard = null;
+    public static Font material = null;
 
-    /* Change component values here */
-    public static void init(){
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        Font font = null;
+    public static Font registerFont(String path) {
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File(".\\assets\\alagard.ttf"));
-            ge.registerFont(font);
+            var font = Font.createFont(Font.TRUETYPE_FONT, new File(path));
+            GraphicsEnvironment
+                    .getLocalGraphicsEnvironment()
+                    .registerFont(font);
+            return font;
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
-            return;
         }
-        UIManager.put("Panel.font", font);
+        return null;
+    }
+
+    /* Change component values here */
+    public static void init() {
+        alagard = registerFont("./assets/alagard.ttf");
+        //System.out.println(UIManager.getDefaults());
+        UIManager.put("Panel.font", alagard);
     }
 }

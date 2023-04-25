@@ -32,7 +32,7 @@ public class App extends JFrame {
         final var director = new Director(App.createSampleBlocks());
         app.add(director);
         java.awt.EventQueue.invokeLater(() -> {
-            app.setVisible(true);
+            app.setVisible(true);;
         });
     }
 }
