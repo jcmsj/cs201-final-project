@@ -1,8 +1,6 @@
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.util.LinkedList;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JPanel;
 

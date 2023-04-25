@@ -1,9 +1,4 @@
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Image;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -26,7 +21,6 @@ public class Block extends KPanel {
         this.value = value;
         JPanel panel = new JPanel(new GridLayout(1, 1));
         panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
         JLabel label = new JLabel("" + value);
         //Resize font to 40;
         label.setFont(getFont().deriveFont(fontSize));
