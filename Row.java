@@ -3,6 +3,7 @@ import java.awt.FlowLayout;
 import java.util.LinkedList;
 import javax.swing.Box;
 import javax.swing.JPanel;
+import Block.Block;
 
 /**
  * Layouts Block components in a Row and adds dividers at intervals based on
@@ -32,9 +33,9 @@ public class Row extends JPanel {
      * @implNote Creates a new copy of blocks using {@link Block#copy}
      */
     public Row(Block[] blocks, LinkedList<Integer> splits, int xGAP) {
-        this.splits = splits;
-        setLayout(new FlowLayout(FlowLayout.CENTER));
+        super(new FlowLayout(FlowLayout.CENTER));
         setOpaque(false);
+        this.splits = splits;
         this.xGAP = xGAP;
         // Filter negative values
         splits.removeIf(it -> it < 0);
@@ -66,21 +67,33 @@ public class Row extends JPanel {
         if (index >= blocks.length)
             return false;
 
-        add(blocks[index]);
         // add divider
-        // last clause skips adding a divider after last item.
+        add(blocks[index]);
         Integer last = splits.peekFirst();
-        if (last != null
-                && counter == last
-                && blocks.length != index) {
-            System.out.println("split at i=" + index);
-            splits.removeFirst();
-            addDivider();
-            counter = 0;
-        }
+        putDivider(last);
         revalidate();
         counter++;
         index++;
+        return true;
+    }
+
+    public void resetCounter() {
+        counter = 0;
+    }
+
+    /* 
+     * Puts a divider if it should be
+     */
+    public boolean putDivider(Integer last) {
+        // last clause skips adding a divider after last item.
+        if (last == null || 
+            counter != last || 
+            blocks.length == index)
+            return false;
+        System.out.println("Put divider at i=" + index);
+        splits.removeFirst();
+        addDivider();
+        resetCounter();
         return true;
     }
 
@@ -101,7 +114,9 @@ public class Row extends JPanel {
         if ((index == splits.removeLast() && blocks.length != index)) {
             remove(dividers.pop());
         }
-        remove(blocks[index--]);
+        remove(blocks[index]);
+        counter--;
+        index--;
         revalidate();
         return true;
     }
@@ -118,6 +133,9 @@ public class Row extends JPanel {
         return d;
     }
 
+    /*
+     * Immediately fills this Row with Blocks having values `n`
+     */
     public static LinkedList<Integer> fill(Integer n, int size) {
         LinkedList<Integer> r = new LinkedList<>();
         for (; size > 0; size--) {

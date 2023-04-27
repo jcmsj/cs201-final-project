@@ -1,4 +1,6 @@
 import javax.swing.JFrame;
+
+import Block.Block;
 import Style.Style;
 
 public class App extends JFrame {

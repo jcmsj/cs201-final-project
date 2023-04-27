@@ -1,8 +1,8 @@
 ## settings
 - [ ] side bar
-- [ ] Font size in px
-- [ ] Loop animation toggle
-- [ ] Mode switch panel
+- [ ] Font size in px (JSpinner)
+- [ ] Loop animation toggle  (JToggleButton)
+- [ ] Mode switch panel (Dropdown)
   - [ ] auto (animates until the end)
   - [ ] semi-auto (stops every iteration)
   - [ ] manual (stops every block movement)

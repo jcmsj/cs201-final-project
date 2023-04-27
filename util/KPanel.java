@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Adds some convenience methods to JPanel
@@ -30,5 +31,9 @@ public class KPanel extends JPanel {
         {
             g.drawImage(image,0,0,getWidth(),getHeight(),this);
         }
+    }
+
+    public static EmptyBorder squareBorder(int side) {
+        return new EmptyBorder(side, side, side, side);
     }
 }

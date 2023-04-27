@@ -4,20 +4,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import Block.Block;
 import Style.Style;
 import util.Animator;
 import util.KPanel;
 
 public class Director extends JPanel {
+    static final int DEFAULT_BORDER_SIZE = 30;
     private final Block[] blocks;
     public final Animator anim = new Animator();
-
+    
     public Director(Block[] blocks) {
         //super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(new EmptyBorder(30, 30, 30, 30));
+        setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
         setFocusable(true);
         setBackground(Style.wine);
         setVisible(true);
@@ -36,11 +37,11 @@ public class Director extends JPanel {
     /**
      * Div by 2 but change 0 to 1.
      */
-    public int calcSplit(int n) {
+    public static int calcSplit(int n) {
         return Math.max(n / 2, 1);
     }
 
-    public void animRow(Row r, Runnable onEnd) {
+    public void animateRow(Row r, Runnable onEnd) {
         anim.every(t -> {
             if (r.next()) {
 
@@ -66,7 +67,7 @@ public class Director extends JPanel {
         if (split == 0) {
             final Row r = new Row(blocks, 1);
             add(r);
-            animRow(r, null);
+            animateRow(r, null);
             split = 1;
             return;
         }
@@ -96,7 +97,7 @@ public class Director extends JPanel {
         split *= 2; // Increase now
         final Row r = new Row(blocks, split);
         add(r);
-        animRow(r, null);
+        animateRow(r, null);
     }
 
     /**
@@ -104,7 +105,7 @@ public class Director extends JPanel {
      * based on the position at an index
      * then puts each to `target`
      */
-    public void merge(Block[] left, Block[] right, Block[] target) {
+    public static void merge(Block[] left, Block[] right, Block[] target) {
         int i = 0, l = 0, r = 0; // indices
         // Check the conditions for merging
         // Important: Compare value field of blocks
@@ -142,9 +143,8 @@ public class Director extends JPanel {
     public boolean exactlyOne(LinkedList<Integer> ints, int n) {
         int count = 0;
         for (Integer x : ints) {
-            count += x.compareTo(n) == 0 ? 1 : 0;
+            count += x.intValue() == n ? 1 : 0;
         }
-
         return count == 1;
     }
 
@@ -209,6 +209,6 @@ public class Director extends JPanel {
         final Row row = new Row(blocks, calcSplits());
         split = calcSplit(split);
         add(row);
-        animRow(row, null);
+        animateRow(row, null);
     }
 }

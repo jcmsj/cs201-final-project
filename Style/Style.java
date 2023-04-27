@@ -33,6 +33,7 @@ public class Style {
     public static void init() {
         alagard = registerFont("./assets/alagard.ttf");
         //System.out.println(UIManager.getDefaults());
+        UIManager.put("Label.font", alagard);
         UIManager.put("Panel.font", alagard);
     }
 }
