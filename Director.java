@@ -7,15 +7,17 @@ import javax.swing.JPanel;
 import Block.Block;
 import Style.Style;
 import util.Animator;
+import util.Aqua;
 import util.KPanel;
 
-public class Director extends JPanel {
+public class Director extends JPanel implements DirectorLike {
     static final int DEFAULT_BORDER_SIZE = 30;
-    private final Block[] blocks;
     public final Animator anim = new Animator();
-    
+    protected final Block[] blocks;
+    protected LinkedList<LinkedList<Integer>> history = new LinkedList<>();
+
     public Director(Block[] blocks) {
-        //super("./assets/<your-image-file>");
+        // super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
@@ -23,11 +25,19 @@ public class Director extends JPanel {
         setBackground(Style.wine);
         setVisible(true);
         this.blocks = blocks;
+        // Attach listeners at the end
+        addListeners();
+    }
+
+    public void addListeners() {
         // Activate by pressing right arrow key
-        anim.onPress(
-                KeyEvent.VK_RIGHT,
-                this,
+        anim.onPress(KeyEvent.VK_RIGHT, this,
                 t -> mergeSort());
+
+        // Activate by pressing left arrow key
+        anim.onPress(KeyEvent.VK_LEFT, this, t -> {
+            // TODO: Reverse animation
+        });
     }
 
     public int calcSplit() {
@@ -81,7 +91,7 @@ public class Director extends JPanel {
             final int nextOffset = Math.min(offset + split, blocks.length);
             Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
             Block[] sorted = new Block[left.length + right.length];
-            merge(left, right, sorted);
+            Aqua.merge(left, right, sorted);
             // Add `sorted` to the previously sorted parts
             for (Block b : sorted) {
                 // Important: duplicate block
@@ -100,26 +110,6 @@ public class Director extends JPanel {
         animateRow(r, null);
     }
 
-    /**
-     * Repositions each block in `source`
-     * based on the position at an index
-     * then puts each to `target`
-     */
-    public static void merge(Block[] left, Block[] right, Block[] target) {
-        int i = 0, l = 0, r = 0; // indices
-        // Check the conditions for merging
-        // Important: Compare value field of blocks
-        while (l < left.length && r < right.length) {
-            target[i++] = left[l].value < right[r].value ? left[l++] : right[r++];
-        }
-        // Put the rest
-        while (l < left.length) {
-            target[i++] = left[l++];
-        }
-        while (r < right.length) {
-            target[i++] = right[r++];
-        }
-    }
 
     boolean skipMid = true;
 
@@ -127,26 +117,7 @@ public class Director extends JPanel {
         mergeStep();
     }
 
-    /**
-     * Makes a true clone of the indices
-     */
-    public LinkedList<Integer> dup(LinkedList<Integer> indices) {
-        LinkedList<Integer> copy = new LinkedList<>();
-        for (var index : indices) {
-            copy.add(index);
-        }
-        return copy;
-    }
 
-    LinkedList<LinkedList<Integer>> history = new LinkedList<>();
-
-    public boolean exactlyOne(LinkedList<Integer> ints, int n) {
-        int count = 0;
-        for (Integer x : ints) {
-            count += x.intValue() == n ? 1 : 0;
-        }
-        return count == 1;
-    }
 
     public LinkedList<Integer> calcSplits() {
         LinkedList<Integer> indices = new LinkedList<>();
@@ -154,7 +125,7 @@ public class Director extends JPanel {
         if (last == null) {
             // return [size]
             indices = Row.fill(blocks.length, 1);
-        } else if (last.stream().allMatch(t -> t == 2) || exactlyOne(last, 1)) {
+        } else if (Aqua.allTwos(last) || Aqua.exactlyOne(last, 1)) {
             /*
              * 2nd to the last split check
              * when array is odd-sized, need to check if the last point in history has
@@ -172,8 +143,8 @@ public class Director extends JPanel {
              * E.g. split [4,5] becomes [2,2] [2,3]
              * to do that here, further split the last list of splits done
              */
-            last = dup(last);
-            
+            last = Aqua.dup(last);
+
             Integer target = last.peekFirst();
             while (target != null) {
                 // For odd-sized elements, there'd always be a case where the target becomes 3.
@@ -202,7 +173,7 @@ public class Director extends JPanel {
         }
         history.add(indices);
         System.out.println(indices);
-        return dup(indices);
+        return Aqua.dup(indices);
     }
 
     public void splitStep() {
