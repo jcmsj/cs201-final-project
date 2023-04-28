@@ -1,6 +1,4 @@
 package Block;
-import java.awt.GridLayout;
-
 import util.KPanel;
 
 /* A movable block with a number */
@@ -16,7 +14,6 @@ public class Block extends KPanel {
     public Block(int value, float fontSize) {
         super("./assets/block.png");
         this.value = value;
-        setLayout(new GridLayout(1, 1));
         setOpaque(false);
         add(new BlockLabel(value, fontSize));
     }
