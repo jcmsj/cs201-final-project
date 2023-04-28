@@ -1,6 +1,8 @@
 import javax.swing.JFrame;
 
 import Block.Block;
+import Directors.BlockDirector;
+import Directors.RowDirector;
 import Style.Style;
 
 public class App extends JFrame {
@@ -31,7 +33,7 @@ public class App extends JFrame {
     public static void main(String[] args) {
         Style.init();
         final App app = new App();
-        final var director = new Director(App.createSampleBlocks());
+        final var director = new RowDirector(App.createSampleBlocks());
         app.add(director);
         java.awt.EventQueue.invokeLater(() -> {
             app.setVisible(true);;

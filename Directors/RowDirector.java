@@ -1,22 +1,27 @@
-import java.awt.event.KeyEvent;
+package Directors;
+import java.awt.Component;
+import java.awt.event.KeyEvent; 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import Block.Block;
+import Block.Row;
 import Style.Style;
 import util.Animator;
-import util.Aqua;
 import util.KPanel;
 
-public class Director extends JPanel implements DirectorLike {
+/**
+ * Controls a row to animate in/out all its blocks in one activation.
+ */
+public class RowDirector extends JPanel implements DirectorLike {
     static final int DEFAULT_BORDER_SIZE = 30;
     public final Animator anim = new Animator();
     protected final Block[] blocks;
     protected LinkedList<LinkedList<Integer>> history = new LinkedList<>();
-
-    public Director(Block[] blocks) {
+    protected LinkedList<Row> rows = new LinkedList<>();
+    public RowDirector(Block[] blocks) {
         // super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -32,12 +37,11 @@ public class Director extends JPanel implements DirectorLike {
     public void addListeners() {
         // Activate by pressing right arrow key
         anim.onPress(KeyEvent.VK_RIGHT, this,
-                t -> mergeSort());
+            t -> mergeSort());
 
         // Activate by pressing left arrow key
-        anim.onPress(KeyEvent.VK_LEFT, this, t -> {
-            // TODO: Reverse animation
-        });
+        anim.onPress(KeyEvent.VK_LEFT, this, 
+            t -> undoLastRow());
     }
 
     public int calcSplit() {
@@ -51,6 +55,24 @@ public class Director extends JPanel implements DirectorLike {
         return Math.max(n / 2, 1);
     }
 
+    public void undoLastRow() {
+        Row r = rows.pollLast();
+        if (r == null) {
+            System.out.println("Empty rows");
+            return;
+        }
+        anim.every(t -> {
+            if (r.undo()) {
+
+            } else {
+                t.cancel();
+                split /=2;
+                remove(r);
+            }
+        }, anim.interval);
+    }
+
+    /* Animate in each block for the row */
     public void animateRow(Row r, Runnable onEnd) {
         anim.every(t -> {
             if (r.next()) {
@@ -110,14 +132,9 @@ public class Director extends JPanel implements DirectorLike {
         animateRow(r, null);
     }
 
-
-    boolean skipMid = true;
-
     public void mergeSort() {
         mergeStep();
     }
-
-
 
     public LinkedList<Integer> calcSplits() {
         LinkedList<Integer> indices = new LinkedList<>();
@@ -144,7 +161,6 @@ public class Director extends JPanel implements DirectorLike {
              * to do that here, further split the last list of splits done
              */
             last = Aqua.dup(last);
-
             Integer target = last.peekFirst();
             while (target != null) {
                 // For odd-sized elements, there'd always be a case where the target becomes 3.
@@ -181,5 +197,23 @@ public class Director extends JPanel implements DirectorLike {
         split = calcSplit(split);
         add(row);
         animateRow(row, null);
+    }
+
+    /**
+     * Calls {@link JPanel#add} then adds a reference of `row` in {@link RowDirector#rows}
+     */
+    public Row add(Row row) {
+        add((Component) row);
+        rows.add(row);
+        return row;
+    }
+
+    /**
+     * Calls {@link JPanel#remove} then removes `row`'s reference in {@link RowDirector#rows}
+     */
+    public Row remove(Row row) {
+        remove((Component) row);
+        rows.remove(row);
+        return row;
     }
 }

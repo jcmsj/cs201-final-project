@@ -1,9 +1,11 @@
+package Block;
+
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.util.LinkedList;
 import javax.swing.Box;
 import javax.swing.JPanel;
-import Block.Block;
 
 /**
  * Layouts Block components in a Row and adds dividers at intervals based on
@@ -17,7 +19,7 @@ public class Row extends JPanel {
     private int index = 0; // Determines which block would be painted
     private int counter = 1; // Determines when to place dividers
 
-    private LinkedList<Component> dividers = new LinkedList<>();
+    private final LinkedList<Component> dividers = new LinkedList<>();
 
     public int getIndex() {
         return index;
@@ -69,10 +71,8 @@ public class Row extends JPanel {
 
         // add divider
         add(blocks[index]);
-        Integer last = splits.peekFirst();
-        putDivider(last);
+        putDivider();
         revalidate();
-        counter++;
         index++;
         return true;
     }
@@ -81,19 +81,38 @@ public class Row extends JPanel {
         counter = 0;
     }
 
-    /* 
+    /*
      * Puts a divider if it should be
      */
-    public boolean putDivider(Integer last) {
+    public boolean putDivider() {
+        Integer last = splits.peekFirst();
+
         // last clause skips adding a divider after last item.
-        if (last == null || 
-            counter != last || 
-            blocks.length == index)
+        if (last == null ||
+                counter != last ||
+                blocks.length == index) {
+            counter++;
             return false;
+        }
         System.out.println("Put divider at i=" + index);
         splits.removeFirst();
         addDivider();
         resetCounter();
+        counter++;
+        return true;
+    }
+
+    public boolean removeDivider() {
+        counter--;
+        if (counter == 0) {
+            var div = dividers.pollLast();
+            System.out.println("Removing divider beside index=" + index + " x=" + div.getX() );
+            remove(div);
+            if (splits.peekLast() != null) {
+                // Reset
+                counter = splits.pollLast()-1;
+            }
+        }
         return true;
     }
 
@@ -101,23 +120,23 @@ public class Row extends JPanel {
      * @return whether a block was removed from painting
      */
     public boolean undo() {
-        if (index >= blocks.length)
+        int lastIndex = getComponentCount() - 1;
+
+        if (index <= 0 || index > blocks.length || lastIndex < 0)
             return false;
 
-        // Remove divider if exists
-        Integer last = splits.peekFirst();
-        if (last != null
-                && counter == last
-                && blocks.length != index) {
-            System.out.println("split at i=" + index);
+    
+        var last = getComponent(lastIndex);
+        if (!(last instanceof Block)) {
+            removeDivider();
         }
-        if ((index == splits.removeLast() && blocks.length != index)) {
-            remove(dividers.pop());
-        }
-        remove(blocks[index]);
-        counter--;
         index--;
-        revalidate();
+        System.out.println("Removing " + blocks[index]);
+        remove(blocks[index]);
+        EventQueue.invokeLater(() -> {
+            revalidate();
+            repaint();
+        });
         return true;
     }
 
@@ -129,7 +148,7 @@ public class Row extends JPanel {
      */
     public Component addDivider() {
         var d = add(Box.createHorizontalStrut(xGAP));
-        dividers.push(d);
+        dividers.offer(d);
         return d;
     }
 

@@ -1,8 +1,10 @@
 ## settings
 - [ ] side bar
 - [ ] Font size in px (JSpinner)
-- [ ] Loop animation toggle  (JToggleButton)
+- [ ] Loop animation toggle (JToggleButton)
+- [ ] Skip split toggle (JToggleButton)
 - [ ] Mode switch panel (Dropdown)
+  * Implementation note: Based on the mode, pressing the start button would change the type of Director that'd be instantiated. 
   - [ ] auto (animates until the end)
   - [ ] semi-auto (stops every iteration)
   - [ ] manual (stops every block movement)

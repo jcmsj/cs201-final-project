@@ -1,10 +1,10 @@
-package util;
+package Directors;
 
 import java.util.LinkedList;
 import Block.Block;
 
 /* 
- * Assists the director with common tasks
+ * Assists directors with common tasks
  */
 public class Aqua {
     /**
@@ -29,9 +29,7 @@ public class Aqua {
         return ints.stream().allMatch(t -> t == 2);
     }
     /**
-     * Repositions each block in `source`
-     * based on the position at an index
-     * then puts each to `target`
+     * Does the actual merge step in merge sort
      */
     public static void merge(Block[] left, Block[] right, Block[] target) {
         int i = 0, l = 0, r = 0; // indices
