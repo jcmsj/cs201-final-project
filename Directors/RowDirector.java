@@ -158,6 +158,10 @@ public class RowDirector extends JPanel implements DirectorLike {
     }
 
     public void mergeSort() {
+        if (split == blocks.length) {
+            System.out.println("Sorted!");
+            return;
+        }
         mergeStep();
     }
 
