@@ -1,4 +1,5 @@
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 import Block.Block;
 import Directors.BlockDirector;
@@ -39,7 +40,8 @@ public class App extends JFrame {
         Style.init();
         final App app = new App();
         final var director = new RowDirector(App.createSampleBlocks());
-        app.add(director);
+        final var scroll = new JScrollPane(director);
+        app.add(scroll);
         java.awt.EventQueue.invokeLater(() -> {
             app.setVisible(true);;
         });
