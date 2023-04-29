@@ -21,17 +21,31 @@ public class RowDirector extends JPanel implements DirectorLike {
     protected final Block[] blocks;
     protected LinkedList<LinkedList<Integer>> history = new LinkedList<>();
     protected LinkedList<Row> rows = new LinkedList<>();
-    public RowDirector(Block[] blocks) {
+    private int borderSize;
+
+    public RowDirector(int[] ints, float fontSize) {
+        this(Block.asBlocks(ints, fontSize));
+    }
+
+    public RowDirector(int[] ints) {
+        this(Block.asBlocks(ints, Block.DEFAULT_FONT_SIZE));
+    }
+    public RowDirector(Block[] blocks, int borderSize) {
         // super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
+        this.borderSize = borderSize;
+        this.blocks = blocks;
+        setBorder(KPanel.squareBorder(this.borderSize));
         setFocusable(true);
         setBackground(Style.wine);
         setVisible(true);
-        this.blocks = blocks;
         // Attach listeners at the end
         addListeners();
+    
+    }
+    public RowDirector(Block[] blocks) {
+        this(blocks, DEFAULT_BORDER_SIZE);
     }
 
     public void addListeners() {

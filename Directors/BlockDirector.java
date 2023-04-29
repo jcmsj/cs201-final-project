@@ -12,6 +12,10 @@ public class BlockDirector extends RowDirector {
     private Row row;
     private Runnable onEnd;
 
+    public BlockDirector(int[] ints) {
+        super(ints);
+    }
+    
     public BlockDirector(Block[] blocks) {
         super(blocks);
     }

@@ -1,20 +1,15 @@
 package Block;
-import util.KPanel;
 
 /* A movable block with a number */
-public class Block extends KPanel {
-    public static final float DEFAULT_FONT_SIZE = 30f;
-    public final int value;
-    static final int side = 15;
-
+public class Block extends Box {
+    public static float DEFAULT_FONT_SIZE = 30f;
+    public int value;
+    static final int side = 15; 
     public Block(int value) {
         this(value, DEFAULT_FONT_SIZE);
     }
-
     public Block(int value, float fontSize) {
-        super("./assets/block.png");
         this.value = value;
-        setOpaque(false);
         add(new BlockLabel(value, fontSize));
     }
 
@@ -61,5 +56,13 @@ public class Block extends KPanel {
             copy[i] = blocks[i].dup();
         }
         return copy;
+    }
+
+    public static Block[] asBlocks(int[] ints, float fontSize) {
+        Block[] blocks = new Block[ints.length];
+        for(int i =0 ; i< ints.length; i++) {
+            blocks[i] = new Block(ints[i], fontSize);
+        }
+        return blocks;
     }
 }
