@@ -6,24 +6,26 @@ import java.util.Iterator;
 
 import Block.Block;
 import Block.Row;
+import Block.Block.STATE;
 
 public class Fader extends RowDirector {
-    public Fader(int[] ints, float fontSize) {
-        super(ints, fontSize);
+    private void init() {
         anim.interval = 100;
         mergeSort();
+    }
+    public Fader(int[] ints, float fontSize) {
+        super(ints, fontSize);
+        init();
     }
 
     public Fader(int[] ints) {
         super(ints);
-        anim.interval = 100;
-        mergeSort();
+        init();
     }
 
     public Fader(Block[] blocks) {
         super(blocks);
-        anim.interval = 100;
-        mergeSort();
+        init();
     }
 
     @Override
@@ -40,7 +42,6 @@ public class Fader extends RowDirector {
         // Activate by pressing right arrow key
         anim.onPress(KeyEvent.VK_RIGHT, this,
                 t -> {
-                    System.out.println("rowI="+rowI);
                     if (rowI >= rows.size()) {
                         System.out.println("Animation end");
                         return;
@@ -54,8 +55,8 @@ public class Fader extends RowDirector {
                             Block b = iter.next();
                             b.show();
                             for (Block p : prev.blocks) {
-                                if (p.isShown && b.value == p.value) {
-                                    p.hide();
+                                if (p.state != STATE.DIMMED && b.value == p.value) {
+                                    p.dim();
                                     break;
                                 }
                             }
@@ -73,23 +74,22 @@ public class Fader extends RowDirector {
     }
 
     public void onPrev() {
-        System.out.println("rowI="+rowI);
         if (rowI <= 1) {
             rowI = 1;
             System.out.println("Animation back to start");
             return;
         }
 
-        Row prev = rows.get(rowI-2);
-        Row cur = rows.get(rowI-1);
         rowI--;
+        Row prev = rows.get(rowI-1);
+        Row cur = rows.get(rowI);
         Iterator<Block> iter = Arrays.stream(cur.blocks).iterator();
         anim.every(tt -> {
             if (iter.hasNext()) {
                 Block b = iter.next();
                 b.hide();
                 for (Block p : prev.blocks) {
-                    if (!p.isShown && b.value == p.value) {
+                    if (p.state != STATE.SHOWN && b.value == p.value) {
                         p.show();
                         break;
                     }
@@ -102,7 +102,7 @@ public class Fader extends RowDirector {
 
     @Override
     public void animateRow(Row r, Runnable onEnd) {
-        // Set blocks as invisible
+        // If not the 1st row, set blocks as invisible
         if (split > 1) {
             for (var b : r.blocks) {
                 b.hide();

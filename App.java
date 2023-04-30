@@ -3,6 +3,7 @@ import javax.swing.JScrollPane;
 
 import Block.Block;
 import Directors.BlockDirector;
+import Directors.Fader;
 import Directors.RowDirector;
 import Style.Style;
 
@@ -22,7 +23,10 @@ public class App extends JFrame {
         // odd size 7
         //int[] ints = { 4, 1, 3, 2, 6, 9, 10 };
         // odd size 9
-        int[] ints = { 4, 1, 3, 11, 2, 6, 0, 9, 10 };
+        //int[] ints = { 4, 1, 3, 11, 2, 6, 0, 9, 10 };
+        // even size 8
+        //int[] ints = { 4, 1, 3, 11, 2, 6, 0, 9 };
+        int[] ints = { 5, 3, 4, 5 };
         // even size
         //int[] ints = { 4, 1, 3, 2, 6, 9, 0, 5 };
         // many even 14
@@ -39,7 +43,7 @@ public class App extends JFrame {
     public static void main(String[] args) {
         Style.init();
         final App app = new App();
-        final var director = new RowDirector(App.createSampleBlocks());
+        final var director = new Fader(App.createSampleBlocks());
         final var scroll = new JScrollPane(director);
         app.add(scroll);
         java.awt.EventQueue.invokeLater(() -> {

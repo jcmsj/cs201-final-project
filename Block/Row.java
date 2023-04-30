@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.util.LinkedList;
-import java.util.function.Consumer;
-
 import javax.swing.Box;
 import javax.swing.JPanel;
 

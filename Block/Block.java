@@ -1,32 +1,94 @@
 package Block;
 
+import java.awt.Color;
+
+import Style.Style;
+
 /* A movable block with a number */
 public class Block extends Box {
     public static float DEFAULT_FONT_SIZE = 30f;
     public int value;
     static final int side = 15; 
+    public Color shownColor;
     public BlockLabel label;
-    private String hiddenStr;
-    public boolean isShown = true;
+    public enum STATE {
+        INVI,
+        SHOWN,
+        DIMMED
+    }
+    public STATE state = STATE.SHOWN;
     public Block(int value) {
         this(value, DEFAULT_FONT_SIZE);
     }
     public Block(int value, float fontSize) {
         this.value = value;
         label = new BlockLabel(value, fontSize);
-        hiddenStr = " ".repeat(("" + value).length());
         add(label);
+        shownColor = label.getForeground();
     }
 
     public void hide() {
-        isShown = false;
-        label.setText(hiddenStr);
+        state = STATE.INVI;
+        label.setForeground(Style.DARK_RED);
+    }
+    public void setState(STATE state) {
+        switch (state) {
+            case DIMMED:
+                dim();
+                break;
+            case INVI:
+                hide();
+                break;
+            case SHOWN:
+                show();
+                break;
+            default:
+                System.out.println("Unhandled state=" + state);
+                break;
+        }
+    }
+    public void nextState() {
+        switch (state) {
+            case DIMMED:
+                // Pass
+                break;
+            case INVI:
+                setState(STATE.SHOWN);
+                break;
+            case SHOWN:
+                setState(STATE.DIMMED);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void prevState() {
+        switch (state) {
+            case INVI:
+                // Pass
+                break;
+            case DIMMED:
+                setState(STATE.SHOWN);
+                break;
+            case SHOWN:
+                setState(STATE.INVI);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void dim() {
+        state = STATE.DIMMED;
+        label.setForeground(Style.reddish2);
     }
 
     public void show() {
-        isShown = true;
-        label.setText("" + value);
+        state = STATE.SHOWN;
+        label.setForeground(shownColor);
     }
+
     /**
      * For debugging
      */
