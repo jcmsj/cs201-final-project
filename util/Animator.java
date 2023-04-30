@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 public class Animator extends Timer {
     // in ms
     public static final int INTERVAL = 50;
-    public final int interval;
+    public int interval;
     public boolean animating = false;
 
     public Animator() {

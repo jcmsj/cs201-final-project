@@ -17,7 +17,7 @@ import util.KPanel;
  */
 public class RowDirector extends JPanel implements DirectorLike {
     static final int DEFAULT_BORDER_SIZE = 30;
-    public final Animator anim = new Animator();
+    public Animator anim = new Animator();
     protected final Block[] blocks;
     protected LinkedList<LinkedList<Integer>> history = new LinkedList<>();
     protected LinkedList<Row> rows = new LinkedList<>();
@@ -42,7 +42,6 @@ public class RowDirector extends JPanel implements DirectorLike {
         setVisible(true);
         // Attach listeners at the end
         addListeners();
-    
     }
     public RowDirector(Block[] blocks) {
         this(blocks, DEFAULT_BORDER_SIZE);

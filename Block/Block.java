@@ -5,14 +5,28 @@ public class Block extends Box {
     public static float DEFAULT_FONT_SIZE = 30f;
     public int value;
     static final int side = 15; 
+    public BlockLabel label;
+    private String hiddenStr;
+    public boolean isShown = true;
     public Block(int value) {
         this(value, DEFAULT_FONT_SIZE);
     }
     public Block(int value, float fontSize) {
         this.value = value;
-        add(new BlockLabel(value, fontSize));
+        label = new BlockLabel(value, fontSize);
+        hiddenStr = " ".repeat(("" + value).length());
+        add(label);
     }
 
+    public void hide() {
+        isShown = false;
+        label.setText(hiddenStr);
+    }
+
+    public void show() {
+        isShown = true;
+        label.setText("" + value);
+    }
     /**
      * For debugging
      */
