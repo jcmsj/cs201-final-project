@@ -33,6 +33,7 @@ public class Config extends JPanel {
         // Create the button and add it to the frame
         // Toggling this panel should be handled by parent
         activator = new JButton(icon);
+        activator.setToolTipText("Toggle settings panel");
         activator.setBounds(2, 2, 40, 40); // x, y, width, height
         activator.setBorderPainted(false);
         activator.setFocusable(true);

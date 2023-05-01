@@ -36,29 +36,36 @@ public class Style {
 
     /* Change component values here */
     public static void init() {
-        alagard = registerFont("./assets/alagard.ttf");
+        alagard = registerFont("./assets/alagard.ttf").deriveFont(13f);
         // JPanel
         UIManager.put("Panel.font", alagard);
-        UIManager.put("Panel.background", Style.wine);
+        UIManager.put("Panel.background", wine);
 
         // JLabel
         UIManager.put("Label.font", alagard);
-        UIManager.put("Label.foreground", Style.yellowish);
+        UIManager.put("Label.foreground", yellowish);
 
         // JFrame
-        UIManager.put("Frame.background", Style.yellowish);
+        UIManager.put("Frame.background", yellowish);
 
         // JButton
-        UIManager.put("Button.foreground", Style.yellowish);
-        UIManager.put("Button.border", BorderFactory.createLineBorder(Style.yellowish));
-        UIManager.put("Button.background", Style.wine);
-        UIManager.put("Button.focus", Style.yellowish);
-        UIManager.put("Button.select", Style.yellowish);
+        UIManager.put("Button.foreground", yellowish);
+        UIManager.put("Button.border", BorderFactory.createLineBorder(yellowish));
+        UIManager.put("Button.background", wine);
+        UIManager.put("Button.focus", yellowish);
+        UIManager.put("Button.select", yellowish);
+        UIManager.put("Button.font", alagard);
 
         // JTextField
-        UIManager.put("TextField.background", Style.DARK_RED);
+        UIManager.put("TextField.background", DARK_RED);
         UIManager.put("TextField.font", alagard);
-        UIManager.put("TextField.foreground", Style.yellowish);
-        UIManager.put("TextField.caretForeground", Style.yellowish);
+        UIManager.put("TextField.foreground", yellowish);
+        UIManager.put("TextField.caretForeground", yellowish);
+
+        // Tooltip
+        UIManager.put("ToolTip.foreground", yellowish);
+        UIManager.put("ToolTip.background", wine2);
+        UIManager.put("ToolTip.font", alagard.deriveFont(20f));
+        UIManager.put("ToolTip.border", BorderFactory.createLineBorder(wine, 1));
     }
 }

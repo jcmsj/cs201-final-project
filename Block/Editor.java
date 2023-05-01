@@ -30,12 +30,15 @@ public class Editor extends JPanel implements ActionListener {
 
 	public Editor() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		addButton = new IconButton("../assets/m-add.png");
+		addButton = new IconButton("../assets/plus.png");
 		addButton.setActionCommand(ACTIONS.ADD.toString());
-		removeButton = new IconButton("../assets/m-remove.png");
+		addButton.setToolTipText("Add a block");
+		removeButton = new IconButton("../assets/minus.png");
 		removeButton.setActionCommand(ACTIONS.REM.toString());
-		submitButton = new IconButton("../assets/m-play.png");
+		removeButton.setToolTipText("Remove last block");
+		submitButton = new IconButton("../assets/play.png");
 		submitButton.setActionCommand(ACTIONS.PLAY.toString());
+		submitButton.setToolTipText("Start sorting!");
 		textFields = new LinkedList<InputBlock>();
 		// set up the panel, arrange blocks horizontally
 		blocksPanel = new JPanel();
@@ -46,8 +49,8 @@ public class Editor extends JPanel implements ActionListener {
 		add(blocksPanel);
 		// add the buttons
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
-		buttonPanel.add(addButton);
 		buttonPanel.add(removeButton);
+		buttonPanel.add(addButton);
 		buttonPanel.add(submitButton);
 		add(Box.createVerticalStrut(Row.X_GAP));
 		add(buttonPanel);
