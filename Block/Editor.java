@@ -19,6 +19,7 @@ public class Editor extends JPanel implements ActionListener {
 	JButton removeButton;
 	JButton submitButton;
 	LinkedList<InputBlock> textFields;
+	int MIN_TEXT_FIELDS = 2;
 	Consumer<int[]> consumer;
 
 	public enum ACTIONS {
@@ -54,8 +55,11 @@ public class Editor extends JPanel implements ActionListener {
 		buttonPanel.add(submitButton);
 		add(Box.createVerticalStrut(Row.X_GAP));
 		add(buttonPanel);
+		//Pprevent buttonPanels from resizing
 		EventQueue.invokeLater(() -> {
 			buttonPanel.setMaximumSize(buttonPanel.getSize());
+			buttonPanel.setMinimumSize(buttonPanel.getSize());
+			buttonPanel.setPreferredSize(buttonPanel.getSize());
 		});
 		addButton.addActionListener(this);
 		removeButton.addActionListener(this);
@@ -85,7 +89,7 @@ public class Editor extends JPanel implements ActionListener {
 				break;
 			case REM:
 			// remove the last JTextField from the panel
-				if (textFields.size() > 0) {
+				if (textFields.size() > MIN_TEXT_FIELDS) {
 					blocksPanel.remove(textFields.pollLast());
 				}
 				break;
