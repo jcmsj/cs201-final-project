@@ -1,6 +1,5 @@
 package Block;
 import javax.swing.JLabel;
-import Style.Style;
 import util.KPanel;
 
 public class BlockLabel extends JLabel {
@@ -8,7 +7,6 @@ public class BlockLabel extends JLabel {
     public BlockLabel(int value, float fontSize, int borderSize) {
         super("" + value);
         setFont(getFont().deriveFont(fontSize));
-        setForeground(Style.reddish);
         setHorizontalAlignment(JLabel.CENTER);
         setBorder(KPanel.squareBorder(borderSize));
     }
