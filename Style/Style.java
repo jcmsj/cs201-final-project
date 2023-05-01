@@ -14,12 +14,12 @@ public class Style {
     /* Put colors as static members here */
     public final static Color yellowish = Color.decode("#FED37F");
     public final static Color wine = Color.decode("#722F37");
+    public final static Color wine2 = Color.decode("#983e49");
     /* DARK_RED is the same color with the block image */
     public final static Color DARK_RED = Color.decode("#4d1212");
     public final static Color reddish2 = Color.decode("#6e1818");
-
+    public final static Color LIGHT_RED = Color.decode("#d70107");
     public static Font alagard = null;
-    public static Font material = null;
 
     public static Font registerFont(String path) {
         try {
@@ -37,7 +37,6 @@ public class Style {
     /* Change component values here */
     public static void init() {
         alagard = registerFont("./assets/alagard.ttf");
-
         // JPanel
         UIManager.put("Panel.font", alagard);
         UIManager.put("Panel.background", Style.wine);
@@ -57,7 +56,7 @@ public class Style {
         UIManager.put("Button.select", Style.yellowish);
 
         // JTextField
-        UIManager.put("TextField.background", Style.wine);
+        UIManager.put("TextField.background", Style.DARK_RED);
         UIManager.put("TextField.font", alagard);
         UIManager.put("TextField.foreground", Style.yellowish);
         UIManager.put("TextField.caretForeground", Style.yellowish);

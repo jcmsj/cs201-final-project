@@ -8,20 +8,16 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import Block.Block;
 import Block.Row;
-import Style.Style;
 import util.Animator;
-import util.KPanel;
 
 /**
  * Controls a row to animate in/out all its blocks in one activation.
  */
 public class RowDirector extends JPanel implements DirectorLike {
-    static final int DEFAULT_BORDER_SIZE = 30;
     public Animator anim = new Animator();
     protected final Block[] blocks;
     protected LinkedList<LinkedList<Integer>> history = new LinkedList<>();
     protected LinkedList<Row> rows = new LinkedList<>();
-    private int borderSize;
 
     public RowDirector(int[] ints, float fontSize) {
         this(Block.asBlocks(ints, fontSize));
@@ -30,21 +26,15 @@ public class RowDirector extends JPanel implements DirectorLike {
     public RowDirector(int[] ints) {
         this(Block.asBlocks(ints, Block.DEFAULT_FONT_SIZE));
     }
-    public RowDirector(Block[] blocks, int borderSize) {
+    public RowDirector(Block[] blocks) {
         // super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.borderSize = borderSize;
         this.blocks = blocks;
-        setBorder(KPanel.squareBorder(this.borderSize));
         setFocusable(true);
-        setBackground(Style.wine);
         setVisible(true);
         // Attach listeners at the end
         addListeners();
-    }
-    public RowDirector(Block[] blocks) {
-        this(blocks, DEFAULT_BORDER_SIZE);
     }
 
     public void addListeners() {
