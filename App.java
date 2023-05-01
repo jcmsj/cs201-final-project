@@ -1,6 +1,8 @@
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+
 import Style.Style;
 import util.On;
 import Block.Block;
@@ -9,6 +11,7 @@ public class App extends JFrame {
     private static float BLOCK_FONT_SIZE = 30f;
     private MainPanel mainPanel;
     private Config config;
+    private JScrollPane scroll;
     Runnable toggleSettings = () -> {
         if (config.isVisible()) {
             config.setVisible(false);
@@ -31,7 +34,8 @@ public class App extends JFrame {
         config.activator.addActionListener(e -> toggleSettings.run());
         add(config.activator);
         mainPanel = new MainPanel();
-        add(mainPanel);
+        scroll = new JScrollPane(mainPanel);
+        add(scroll);
         initHotkeys();
     }
     public void initHotkeys() {
