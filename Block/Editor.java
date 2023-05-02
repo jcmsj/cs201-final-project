@@ -6,18 +6,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.function.Consumer;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import Style.Style;
 import util.IconButton;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 
 public class Editor extends JPanel implements ActionListener {
 	JPanel blocksPanel;
-	JButton addButton;
-	JButton removeButton;
-	JButton submitButton;
+	JButton adder;
+	JButton remover;
+	JButton submitter;
 	LinkedList<InputBlock> textFields;
 	int MIN_TEXT_FIELDS = 2;
 	Consumer<int[]> consumer;
@@ -29,41 +31,49 @@ public class Editor extends JPanel implements ActionListener {
 		CLEAR
 	}
 
+	class PButton extends IconButton {
+		final static Border focused = BorderFactory.createLineBorder(Style.yellowish);
+		public PButton(String path, ACTIONS a, String toolTip) {
+			super(path);
+			setFocusedBorder(focused);
+			setActionCommand(a.toString());
+			setToolTipText(toolTip);
+		}
+	}
+
+	class BlocksPanel extends JPanel {
+		public BlocksPanel() {
+			var flow = new FlowLayout();
+			flow.setHgap(30);
+			setLayout(flow);
+			setOpaque(false);
+		}
+	}
 	public Editor() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		addButton = new IconButton("../assets/plus.png");
-		addButton.setActionCommand(ACTIONS.ADD.toString());
-		addButton.setToolTipText("Add a block");
-		removeButton = new IconButton("../assets/minus.png");
-		removeButton.setActionCommand(ACTIONS.REM.toString());
-		removeButton.setToolTipText("Remove last block");
-		submitButton = new IconButton("../assets/play.png");
-		submitButton.setActionCommand(ACTIONS.PLAY.toString());
-		submitButton.setToolTipText("Start sorting!");
+		adder = new PButton("../assets/plus.png", ACTIONS.ADD, "Add a block");
+		remover = new PButton("../assets/minus.png", ACTIONS.REM, "Remove last block");
+		submitter = new PButton("../assets/play.png", ACTIONS.PLAY, "Start sorting!");
 		textFields = new LinkedList<InputBlock>();
 		// set up the panel, arrange blocks horizontally
-		blocksPanel = new JPanel();
-		var flow = new FlowLayout();
-		flow.setHgap(30);
-		blocksPanel.setLayout(flow);
-		blocksPanel.setOpaque(false);
+		blocksPanel = new BlocksPanel();
 		add(blocksPanel);
 		// add the buttons
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
-		buttonPanel.add(removeButton);
-		buttonPanel.add(addButton);
-		buttonPanel.add(submitButton);
+		JPanel btnGroup = new JPanel(new GridLayout(1, 3));
+		btnGroup.add(remover);
+		btnGroup.add(adder);
+		btnGroup.add(submitter);
 		add(Box.createVerticalStrut(Row.X_GAP));
-		add(buttonPanel);
+		add(btnGroup);
 		//Pprevent buttonPanels from resizing
 		EventQueue.invokeLater(() -> {
-			buttonPanel.setMaximumSize(buttonPanel.getSize());
-			buttonPanel.setMinimumSize(buttonPanel.getSize());
-			buttonPanel.setPreferredSize(buttonPanel.getSize());
+			btnGroup.setMaximumSize(btnGroup.getSize());
+			btnGroup.setMinimumSize(btnGroup.getSize());
+			btnGroup.setPreferredSize(btnGroup.getSize());
 		});
-		addButton.addActionListener(this);
-		removeButton.addActionListener(this);
-		submitButton.addActionListener(this);
+		adder.addActionListener(this);
+		remover.addActionListener(this);
+		submitter.addActionListener(this);
 		// By default add 2 boxes
 		addField();
 		addField();

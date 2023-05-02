@@ -19,6 +19,7 @@ public class Style {
     public final static Color DARK_RED = Color.decode("#4d1212");
     public final static Color reddish2 = Color.decode("#6e1818");
     public final static Color LIGHT_RED = Color.decode("#d70107");
+    public final static Color HIGHLIGHT_RED = Color.decode("#c42d16");
     public static Font alagard = null;
 
     public static Font registerFont(String path) {
@@ -40,19 +41,18 @@ public class Style {
         // JPanel
         UIManager.put("Panel.font", alagard);
         UIManager.put("Panel.background", wine);
-
         // JLabel
         UIManager.put("Label.font", alagard);
         UIManager.put("Label.foreground", yellowish);
 
         // JFrame
         UIManager.put("Frame.background", yellowish);
-
+        
         // JButton
         UIManager.put("Button.foreground", yellowish);
-        UIManager.put("Button.border", BorderFactory.createLineBorder(yellowish));
+        UIManager.put("Button.border", BorderFactory.createLineBorder(yellowish.darker()));
         UIManager.put("Button.background", wine);
-        UIManager.put("Button.focus", yellowish);
+        UIManager.put("Button.focus", Color.TRANSLUCENT);
         UIManager.put("Button.select", yellowish);
         UIManager.put("Button.font", alagard);
 

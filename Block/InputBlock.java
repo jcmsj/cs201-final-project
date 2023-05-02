@@ -15,5 +15,7 @@ public class InputBlock extends Box {
         input.setFont(input.getFont().deriveFont(30f));
         input.setBorder(KPanel.squareBorder(0));
         add(input);
+
+        input.addMouseListener(hoverer);
     }
 }
