@@ -20,6 +20,7 @@ public class Style {
     public final static Color reddish2 = Color.decode("#6e1818");
     public final static Color LIGHT_RED = Color.decode("#d70107");
     public final static Color HIGHLIGHT_RED = Color.decode("#c42d16");
+    public final static Color DARK_GREEN = Color.decode("#04330a");
     public static Font alagard = null;
 
     public static Font registerFont(String path) {

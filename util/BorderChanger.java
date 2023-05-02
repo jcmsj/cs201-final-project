@@ -16,7 +16,8 @@ public class BorderChanger implements FocusListener {
     }
     @Override
     public void focusGained(FocusEvent e) {
-        target.setBorder(focusedBorder);
+        if (focusedBorder != null)
+            target.setBorder(focusedBorder);
     }
     @Override
     public void focusLost(FocusEvent e) {
@@ -27,7 +28,7 @@ public class BorderChanger implements FocusListener {
         focusedBorder = f;
     }
 
-    public void setUnfocusedBorder(Border unfocusedBorder) {
-        this.unfocusedBorder = unfocusedBorder;
+    public void setUnfocusedBorder(Border u) {
+        unfocusedBorder = u;
     }
 }

@@ -42,9 +42,9 @@ public class MainPanel extends JPanel {
     };
     
     public MainPanel() {
+        setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
         editor = new Editor();
         editor.setConsumer(consumer);
-        setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
         On.press(KeyEvent.VK_ENTER, editor, ev -> {
             editor.doAction(ACTIONS.PLAY);
         });

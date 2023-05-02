@@ -1,9 +1,13 @@
 package Block;
+
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import javax.swing.BoxLayout;
@@ -21,6 +25,8 @@ public class Editor extends JPanel implements ActionListener {
 	JButton remover;
 	JButton submitter;
 	LinkedList<InputBlock> textFields;
+	private JPanel removerRow;
+	public PButton resetter;
 	int MIN_TEXT_FIELDS = 2;
 	Consumer<int[]> consumer;
 
@@ -28,11 +34,12 @@ public class Editor extends JPanel implements ActionListener {
 		ADD,
 		REM,
 		PLAY,
-		CLEAR
+		RESET
 	}
 
-	class PButton extends IconButton {
+	public static class PButton extends IconButton {
 		final static Border focused = BorderFactory.createLineBorder(Style.yellowish);
+
 		public PButton(String path, ACTIONS a, String toolTip) {
 			super(path);
 			setFocusedBorder(focused);
@@ -41,7 +48,7 @@ public class Editor extends JPanel implements ActionListener {
 		}
 	}
 
-	class BlocksPanel extends JPanel {
+	static class BlocksPanel extends JPanel {
 		public BlocksPanel() {
 			var flow = new FlowLayout();
 			flow.setHgap(30);
@@ -49,23 +56,45 @@ public class Editor extends JPanel implements ActionListener {
 			setOpaque(false);
 		}
 	}
+
+	private int xModifier = 3;
+
+	public void moveRemover(InputBlock b) {
+		int mid = Math.round((b.getWidth() - remover.getWidth()) / 2f);
+		remover.setLocation(b.getX() + mid + xModifier, remover.getY());
+		repaint();
+		revalidate();
+	}
+
 	public Editor() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		adder = new PButton("../assets/plus.png", ACTIONS.ADD, "Add a block");
-		remover = new PButton("../assets/minus.png", ACTIONS.REM, "Remove last block");
+		adder = new GreenBlock();
+		adder.setActionCommand(ACTIONS.ADD.toString());
+		adder.setToolTipText("Add a block");
+		remover = new PButton("../assets/x.png", ACTIONS.REM, "Remove above block");
+		remover.setBounds(0, 0, 50, 50);
 		submitter = new PButton("../assets/play.png", ACTIONS.PLAY, "Start sorting!");
+		resetter = new PButton("../assets/reset.png", ACTIONS.RESET, "Clear blocks");
 		textFields = new LinkedList<InputBlock>();
 		// set up the panel, arrange blocks horizontally
+		var inner = new JPanel();
 		blocksPanel = new BlocksPanel();
-		add(blocksPanel);
-		// add the buttons
+		inner.add(blocksPanel);
+		inner.add(adder);
+		add(inner);
+
+		{ // Put remover into its own row where it'll be able to move freely
+			removerRow = new JPanel(null);
+			removerRow.setPreferredSize(new Dimension(1, 100));
+			removerRow.add(remover);
+			add(removerRow);
+		}
 		JPanel btnGroup = new JPanel(new GridLayout(1, 3));
-		btnGroup.add(remover);
-		btnGroup.add(adder);
+		btnGroup.add(resetter);
 		btnGroup.add(submitter);
 		add(Box.createVerticalStrut(Row.X_GAP));
 		add(btnGroup);
-		//Pprevent buttonPanels from resizing
+		// Pprevent buttonPanels from resizing
 		EventQueue.invokeLater(() -> {
 			btnGroup.setMaximumSize(btnGroup.getSize());
 			btnGroup.setMinimumSize(btnGroup.getSize());
@@ -74,40 +103,89 @@ public class Editor extends JPanel implements ActionListener {
 		adder.addActionListener(this);
 		remover.addActionListener(this);
 		submitter.addActionListener(this);
+		resetter.addActionListener(this);
 		// By default add 2 boxes
-		addField();
+		addField().edit(); // And focus first block
 		addField();
 	}
 
 	// add a new JTextField to the panel
-	public void addField() {
-		InputBlock input = new InputBlock();
-		blocksPanel.add(input);
-		textFields.add(input);
+	InputBlock deletable;
+
+	public InputBlock addField() {
+		InputBlock block = new InputBlock();
+		block.input.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				deletable = block;
+				moveRemover(block);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// Pass
+			}
+
+		});
+		blocksPanel.add(block);
+		textFields.offer(block);
+		return block;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		doAction(ACTIONS.valueOf(e.getActionCommand()));
 	}
+
+	public void resetFields() {
+		// Clear all references of old objects
+		blocksPanel.removeAll();
+		textFields.clear();
+		deletable = null;
+		addField().edit();
+		addField();
+	}
+
 	public void doAction(ACTIONS act) {
 		switch (act) {
 			case ADD:
-				addField();
+				addField().edit();
 				break;
 			case PLAY:
 				consumer.accept(makeInts());
 				break;
 			case REM:
-			// remove the last JTextField from the panel
-				if (textFields.size() > MIN_TEXT_FIELDS) {
-					blocksPanel.remove(textFields.pollLast());
-				}
+				removeSelected();
+				break;
+			case RESET:
+				resetFields();
 				break;
 			default:
 				break;
 		}
 		revalidate();
 		repaint();
+	}
+
+	public void removeSelected() {
+		if (deletable == null || textFields.size() <= MIN_TEXT_FIELDS) {
+			return;
+		}
+		InputBlock nextDeletable;
+		// select the last child
+		if (textFields.peekLast() == deletable) {
+			textFields.removeLast();
+			nextDeletable = textFields.peekLast();
+			// select the first child
+		} else if (textFields.peekFirst() == deletable) {
+			textFields.removeFirst();
+			nextDeletable = textFields.peekFirst();
+			// select the next sibling
+		} else {
+			nextDeletable = textFields.get(textFields.indexOf(deletable) + 1);
+			textFields.remove(deletable);
+		}
+		blocksPanel.remove(deletable);
+		nextDeletable.edit();
 	}
 
 	public int[] makeInts() {
