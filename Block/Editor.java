@@ -23,7 +23,7 @@ public class Editor extends JPanel implements ActionListener {
 	JPanel blocksPanel;
 	JButton adder;
 	JButton remover;
-	JButton submitter;
+	public JButton submitter;
 	LinkedList<InputBlock> textFields;
 	private JPanel removerRow;
 	public PButton resetter;

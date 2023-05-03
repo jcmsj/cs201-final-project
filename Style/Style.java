@@ -57,6 +57,15 @@ public class Style {
         UIManager.put("Button.select", yellowish);
         UIManager.put("Button.font", alagard);
 
+        // JRadioButton
+        UIManager.put("RadioButton.foreground", yellowish);
+        UIManager.put("RadioButton.border", BorderFactory.createLineBorder(yellowish.darker()));
+        UIManager.put("RadioButton.background", wine);
+        UIManager.put("RadioButton.focus", Color.TRANSLUCENT);
+        UIManager.put("RadioButton.select", yellowish);
+        UIManager.put("RadioButton.font", alagard);
+
+
         // JTextField
         UIManager.put("TextField.background", DARK_RED);
         UIManager.put("TextField.font", alagard);

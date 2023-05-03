@@ -14,12 +14,7 @@ import util.On;
 public class MainPanel extends JPanel {
     private Editor editor;
     static final int DEFAULT_BORDER_SIZE = 30;
-    public enum MODE {
-        AUTO,
-        SEMI,
-        MANUAL,
-    }
-    private MODE mode = MODE.MANUAL;
+    ANIM_MODE mode = ANIM_MODE.SEMI;
     private JPanel director;
     public JPanel shown;
     private Consumer<int[]> consumer = new Consumer<int[]>() {
@@ -51,7 +46,7 @@ public class MainPanel extends JPanel {
         addEditor();
     }
 
-    public void setMode(MODE m) {
+    public void setMode(ANIM_MODE m) {
         mode = m;
     }
     
@@ -61,7 +56,7 @@ public class MainPanel extends JPanel {
         repaint();
         revalidate();
     }
-    public JPanel makeEditor(MODE m, int[] ints) {
+    public JPanel makeEditor(ANIM_MODE m, int[] ints) {
         switch (m) {
             case MANUAL:
                 return new BlockFader(ints);

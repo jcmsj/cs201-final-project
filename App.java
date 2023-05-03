@@ -28,12 +28,14 @@ public class App extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
 
-        config = new Config(getWidth() / 4, getHeight());
+        mainPanel = new MainPanel();
+        config = new Config(getWidth() / 4, getHeight(), c -> {
+            mainPanel.mode = c;            
+        });
         config.setVisible(false);
         add(config);
         config.activator.addActionListener(e -> toggleSettings.run());
         add(config.activator);
-        mainPanel = new MainPanel();
         scroll = new JScrollPane(mainPanel);
         add(scroll);
         initHotkeys();

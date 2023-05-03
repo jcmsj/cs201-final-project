@@ -1,6 +1,7 @@
 package Directors;
+
 import java.awt.Component;
-import java.awt.event.KeyEvent; 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ public class RowDirector extends JPanel implements DirectorLike {
     public RowDirector(int[] ints) {
         this(Block.asBlocks(ints, Block.DEFAULT_FONT_SIZE));
     }
+
     public RowDirector(Block[] blocks) {
         // super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
@@ -40,11 +42,11 @@ public class RowDirector extends JPanel implements DirectorLike {
     public void addListeners() {
         // Activate by pressing right arrow key
         anim.onPress(KeyEvent.VK_RIGHT, this,
-            t -> mergeSort());
+                t -> mergeSort());
 
         // Activate by pressing left arrow key
-        anim.onPress(KeyEvent.VK_LEFT, this, 
-            t -> undoLastRow());
+        anim.onPress(KeyEvent.VK_LEFT, this,
+                t -> undoLastRow());
     }
 
     public int calcSplit() {
@@ -70,7 +72,7 @@ public class RowDirector extends JPanel implements DirectorLike {
             } else {
                 t.cancel();
                 Aqua.syncPositions(r.blocks, blocks);
-                split /=2;
+                split /= 2;
                 remove(r);
             }
         }, anim.interval);
@@ -126,7 +128,7 @@ public class RowDirector extends JPanel implements DirectorLike {
             todo += sorted.length;
         }
 
-        Aqua.syncPositions( done, blocks);
+        Aqua.syncPositions(done, blocks);
         split *= 2; // Increase now
         final Row r = new Row(blocks, split);
         add(r);
@@ -134,12 +136,13 @@ public class RowDirector extends JPanel implements DirectorLike {
     }
 
     public void mergeSort() {
-        if (split == blocks.length) {
+        if (split >= blocks.length) {
             System.out.println("Sorted!");
             return;
         }
         mergeStep();
     }
+
     public LinkedList<Integer> calcSplits() {
         LinkedList<Integer> indices = new LinkedList<>();
         var last = history.peekLast();
@@ -204,7 +207,8 @@ public class RowDirector extends JPanel implements DirectorLike {
     }
 
     /**
-     * Calls {@link JPanel#add} then adds a reference of `row` in {@link RowDirector#rows}
+     * Calls {@link JPanel#add} then adds a reference of `row` in
+     * {@link RowDirector#rows}
      */
     public Row add(Row row) {
         add((Component) row);
@@ -213,7 +217,8 @@ public class RowDirector extends JPanel implements DirectorLike {
     }
 
     /**
-     * Calls {@link JPanel#remove} then removes `row`'s reference in {@link RowDirector#rows}
+     * Calls {@link JPanel#remove} then removes `row`'s reference in
+     * {@link RowDirector#rows}
      */
     public Row remove(Row row) {
         remove((Component) row);
