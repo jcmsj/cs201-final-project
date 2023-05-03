@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 
 import Block.Editor;
 import Block.Editor.ACTIONS;
-import Directors.BlockDirector;
+import Directors.BlockFader;
 import Directors.Fader;
 import util.KPanel;
 import util.On;
@@ -19,7 +19,7 @@ public class MainPanel extends JPanel {
         SEMI,
         MANUAL,
     }
-    private MODE mode = MODE.SEMI;
+    private MODE mode = MODE.MANUAL;
     private JPanel director;
     public JPanel shown;
     private Consumer<int[]> consumer = new Consumer<int[]>() {
@@ -64,7 +64,7 @@ public class MainPanel extends JPanel {
     public JPanel makeEditor(MODE m, int[] ints) {
         switch (m) {
             case MANUAL:
-                return new BlockDirector(ints);
+                return new BlockFader(ints);
             case SEMI:
                 return new Fader(ints);
             default:
