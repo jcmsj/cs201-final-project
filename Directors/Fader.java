@@ -3,7 +3,6 @@ package Directors;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Iterator;
-
 import Block.Block;
 import Block.Row;
 import Block.Block.STATE;
@@ -13,6 +12,7 @@ public class Fader extends RowDirector {
         anim.interval = 100;
         mergeSort();
     }
+
     public Fader(int[] ints, float fontSize) {
         super(ints, fontSize);
         init();
@@ -35,69 +35,66 @@ public class Fader extends RowDirector {
         }
     }
 
-    int rowI = 1;
-
+    protected int rowI = 1;
+    
     @Override
     public void addListeners() {
         // Activate by pressing right arrow key
-        anim.onPress(KeyEvent.VK_RIGHT, this,
-                t -> {
-                    if (rowI >= rows.size()) {
-                        System.out.println("Animation end");
-                        return;
-                    }
-
-                    Row prev = rows.get(rowI - 1);
-                    Row cur = rows.get(rowI);
-                    var iter = Arrays.stream(cur.blocks).iterator();
-                    anim.every(tt -> {
-                        if (iter.hasNext()) {
-                            Block b = iter.next();
-                            b.show();
-                            for (Block p : prev.blocks) {
-                                if (p.state != STATE.DIMMED && b.value == p.value) {
-                                    p.dim();
-                                    break;
-                                }
-                            }
-                        } else {
-                            tt.cancel();
+        anim.onPress(KeyEvent.VK_RIGHT, this, t -> {
+            if (rowI >= rows.size()) {
+                System.out.println("Animation end");
+                return;
+            }
+    
+            Row prev = rows.get(rowI - 1);
+            Row cur = rows.get(rowI);
+            var iter = Arrays.stream(cur.blocks).iterator();
+            anim.every(tt -> {
+                if (iter.hasNext()) {
+                    Block b = iter.next();
+                    b.show();
+                    //Find equivalent block from the previous row that isn't DIMMED
+                    for (Block p : prev.blocks) {
+                        if (p.state != STATE.DIMMED && b.value == p.value) {
+                            p.dim();
+                            break;
                         }
-                    }, 0);
-                    rowI++;
-                });
+                    }
+                } else {
+                    tt.cancel();
+                }
+            }, 0);
+            rowI++;
+        });
 
         // Activate by pressing left arrow key
-        anim.onPress(KeyEvent.VK_LEFT, this,
-        t -> onPrev());
-        
-    }
-
-    public void onPrev() {
-        if (rowI <= 1) {
-            rowI = 1;
-            System.out.println("Animation back to start");
-            return;
-        }
-
-        rowI--;
-        Row prev = rows.get(rowI-1);
-        Row cur = rows.get(rowI);
-        Iterator<Block> iter = Arrays.stream(cur.blocks).iterator();
-        anim.every(tt -> {
-            if (iter.hasNext()) {
-                Block b = iter.next();
-                b.hide();
-                for (Block p : prev.blocks) {
-                    if (p.state != STATE.SHOWN && b.value == p.value) {
-                        p.show();
-                        break;
-                    }
-                }
-            } else {
-                tt.cancel();
+        anim.onPress(KeyEvent.VK_LEFT, this, t -> {
+            if (rowI <= 1) {
+                rowI = 1;
+                System.out.println("Animation back to start");
+                return;
             }
-        }, 0);
+    
+            rowI--;
+            Row prev = rows.get(rowI - 1);
+            Row cur = rows.get(rowI);
+            Iterator<Block> iter = Arrays.stream(cur.blocks).iterator();
+            anim.every(tt -> {
+                if (iter.hasNext()) {
+                    Block b = iter.next();
+                    b.hide();
+                    // Find equivalent block from previous row that isn't shown
+                    for (Block p : prev.blocks) {
+                        if (p.state != STATE.SHOWN && b.value == p.value) {
+                            p.show();
+                            break;
+                        }
+                    }
+                } else {
+                    tt.cancel();
+                }
+            }, 0);
+        });
     }
 
     @Override

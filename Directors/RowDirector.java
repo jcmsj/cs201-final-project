@@ -69,7 +69,7 @@ public class RowDirector extends JPanel implements DirectorLike {
 
             } else {
                 t.cancel();
-                syncPositions(r.blocks);
+                Aqua.syncPositions(r.blocks, blocks);
                 split /=2;
                 remove(r);
             }
@@ -126,24 +126,11 @@ public class RowDirector extends JPanel implements DirectorLike {
             todo += sorted.length;
         }
 
-        syncPositions(done);
+        Aqua.syncPositions( done, blocks);
         split *= 2; // Increase now
         final Row r = new Row(blocks, split);
         add(r);
         animateRow(r, null);
-    }
-
-    public void syncPositions(ArrayList<Block> newPos) {
-        // Sync block positions
-        for (int i = 0; i < blocks.length; i++) {
-            blocks[i] = newPos.get(i);
-        }
-    }
-    public void syncPositions(Block[] newPos) {
-        // Sync block positions
-        for (int i = 0; i < blocks.length; i++) {
-            blocks[i] = newPos[i];
-        }
     }
 
     public void mergeSort() {
@@ -153,7 +140,6 @@ public class RowDirector extends JPanel implements DirectorLike {
         }
         mergeStep();
     }
-
     public LinkedList<Integer> calcSplits() {
         LinkedList<Integer> indices = new LinkedList<>();
         var last = history.peekLast();

@@ -58,7 +58,7 @@ public class BlockDirector extends RowDirector {
                     if (row instanceof Row && row.equals(r)) {
                         row = null;
                     }
-                    syncPositions(r.blocks);
+                    Aqua.syncPositions(blocks, r.blocks);
                     remove(r);
                     split /=2;
                     if (onEnd != null) {

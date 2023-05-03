@@ -1,5 +1,6 @@
 package Directors;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import Block.Block;
 
@@ -44,6 +45,19 @@ public class Aqua {
         }
         while (r < right.length) {
             target[i++] = right[r++];
+        }
+    }
+
+    public static void syncPositions(ArrayList<Block> sources, Block[] targets) {
+        // Sync block positions
+        for (int i = 0; i < targets.length; i++) {
+            targets[i] = sources.get(i);
+        }
+    }
+    public static void syncPositions(Block[] sources, Block[] targets) {
+        // Sync block positions
+        for (int i = 0; i < targets.length; i++) {
+            targets[i] = sources[i];
         }
     }
 }
