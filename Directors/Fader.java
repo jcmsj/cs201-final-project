@@ -40,32 +40,7 @@ public class Fader extends RowDirector {
     @Override
     public void addListeners() {
         // Activate by pressing right arrow key
-        anim.onPress(KeyEvent.VK_RIGHT, this, t -> {
-            if (rowI >= rows.size()) {
-                System.out.println("Animation end");
-                return;
-            }
-    
-            Row prev = rows.get(rowI - 1);
-            Row cur = rows.get(rowI);
-            var iter = Arrays.stream(cur.blocks).iterator();
-            anim.every(tt -> {
-                if (iter.hasNext()) {
-                    Block b = iter.next();
-                    b.show();
-                    //Find equivalent block from the previous row that isn't DIMMED
-                    for (Block p : prev.blocks) {
-                        if (p.state != STATE.DIMMED && b.value == p.value) {
-                            p.dim();
-                            break;
-                        }
-                    }
-                } else {
-                    tt.cancel();
-                }
-            }, 0);
-            rowI++;
-        });
+        anim.onPress(KeyEvent.VK_RIGHT, this, t -> nextRow(null));
 
         // Activate by pressing left arrow key
         anim.onPress(KeyEvent.VK_LEFT, this, t -> {
@@ -74,7 +49,7 @@ public class Fader extends RowDirector {
                 System.out.println("Animation back to start");
                 return;
             }
-    
+
             rowI--;
             Row prev = rows.get(rowI - 1);
             Row cur = rows.get(rowI);
@@ -109,5 +84,40 @@ public class Fader extends RowDirector {
         }
         // Instantly show 1st row
         r.revealAll();
+    }
+
+    public void nextRow(Runnable cb) {
+        if (rowI >= rows.size()) {
+            System.out.println("Animation end");
+            return;
+        }
+        Row prev = rows.get(rowI - 1);
+        Row cur = rows.get(rowI);
+        var iter = Arrays.stream(cur.blocks).iterator();
+        handleRow(iter, prev.blocks, cb);
+        rowI++;
+    }
+
+    public void handleRow(Iterator<Block> iter, Block[] previous, Runnable onEnd) {
+        anim.every(tt -> {
+            if (iter.hasNext()) {
+                updateBlocks(iter.next(), previous);
+            } else {
+                tt.cancel();
+                if (onEnd != null)
+                    onEnd.run();
+            }
+        }, 0);
+    }
+
+    public void updateBlocks(Block b, Block[] previous) {
+        b.show();
+        // Find equivalent block from the previous row that isn't DIMMED
+        for (Block p : previous) {
+            if (p.state != STATE.DIMMED && b.value == p.value) {
+                p.dim();
+                break;
+            }
+        }
     }
 }
