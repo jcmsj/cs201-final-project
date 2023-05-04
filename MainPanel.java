@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import Block.Editor;
 import Block.Editor.ACTIONS;
+import Directors.AutoFader;
 import Directors.BlockFader;
 import Directors.Fader;
 import util.KPanel;
@@ -63,9 +64,7 @@ public class MainPanel extends JPanel {
             case SEMI:
                 return new Fader(ints);
             default:
-                // TODO
-                break;
+                return new AutoFader(ints);
         }
-        return null;
     }
 }

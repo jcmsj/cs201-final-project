@@ -58,7 +58,6 @@ public class Config extends JPanel {
 
 
         modeAuto = new ModeButton("Auto", ANIM_MODE.AUTO);
-        modeAuto.setEnabled(false); // TODO: Auto mode
         modeSemi = new ModeButton("Semi", ANIM_MODE.SEMI);
         modeSemi.setSelected(true);
         modeManual = new ModeButton("Manual", ANIM_MODE.MANUAL);

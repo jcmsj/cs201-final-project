@@ -36,7 +36,7 @@ public class Fader extends RowDirector {
     }
 
     protected int rowI = 1;
-    
+
     @Override
     public void addListeners() {
         // Activate by pressing right arrow key
