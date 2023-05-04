@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.util.LinkedList;
+
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JPanel;
 
@@ -36,6 +38,7 @@ public class Row extends JPanel {
      */
     public Row(Block[] blocks, LinkedList<Integer> splits, int xGAP) {
         super(new FlowLayout(FlowLayout.CENTER));
+        setBorder(BorderFactory.createEmptyBorder(15, 5, 15, 5));
         setOpaque(false);
         this.splits = splits;
         this.xGAP = xGAP;

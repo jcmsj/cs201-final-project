@@ -10,6 +10,8 @@ import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
 
+import util.KPanel;
+
 public class Style {
     /* Put colors as static members here */
     public final static Color yellowish = Color.decode("#FED37F");
@@ -48,7 +50,7 @@ public class Style {
 
         // JFrame
         UIManager.put("Frame.background", yellowish);
-        
+
         // JButton
         UIManager.put("Button.foreground", yellowish);
         UIManager.put("Button.border", BorderFactory.createLineBorder(yellowish.darker()));
@@ -59,12 +61,11 @@ public class Style {
 
         // JRadioButton
         UIManager.put("RadioButton.foreground", yellowish);
-        UIManager.put("RadioButton.border", BorderFactory.createLineBorder(yellowish.darker()));
+        UIManager.put("RadioButton.border", BorderFactory.createLineBorder(yellowish));
         UIManager.put("RadioButton.background", wine);
         UIManager.put("RadioButton.focus", Color.TRANSLUCENT);
         UIManager.put("RadioButton.select", yellowish);
         UIManager.put("RadioButton.font", alagard);
-
 
         // JTextField
         UIManager.put("TextField.background", DARK_RED);
@@ -72,6 +73,11 @@ public class Style {
         UIManager.put("TextField.foreground", yellowish);
         UIManager.put("TextField.caretForeground", yellowish);
 
+        // JList
+        UIManager.put("List.background", wine);
+        UIManager.put("List.foreground", yellowish);
+        UIManager.put("List.selectionBackground", wine.brighter());
+        UIManager.put("List.selectionForeground", yellowish);
         // Tooltip
         UIManager.put("ToolTip.foreground", yellowish);
         UIManager.put("ToolTip.background", wine2);
