@@ -12,10 +12,6 @@ public class RowFader extends Fader {
 
     @Override
     public void mergeSort() {
-        if (split >= blocks.length) {
-            System.out.println("Sorted!");
-            return;
-        }
         split = 1;
         r2 = new Row2(blocks, split);
         add(r2);
@@ -32,7 +28,6 @@ public class RowFader extends Fader {
         var next = Row2.normalMerge(split, blocks);
         for (var b : next.blocks) {
             b.hide();
-            b.repaint();
         }
         add(next);
         r2.next = next;

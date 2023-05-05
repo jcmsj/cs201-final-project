@@ -1,37 +1,35 @@
 package Directors;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.function.Consumer;
-import javax.swing.BorderFactory;
-import javax.swing.border.Border;
 import Block.Block;
 import Block.Row;
-import Style.Style;
 import util.Animator;
 
 public class Row2 extends Row {
     ArrayList<Block> done;
     int _split;
+
     public Row2(Block[] blocks, int split) {
         super(blocks, split);
         this._split = split;
-        while(next()) {
+        while (next()) {
 
         }
         done = new ArrayList<>(blocks.length);
     }
 
     Row2 next;
+
     public void derive(int split, Runnable onEnd) {
         System.out.println("Split by " + split);
-        deriveIter(split/2, done, onEnd);
+        deriveIter(split / 2, done, onEnd);
     }
 
     public static Row2 normalMerge(int split, Block[] blocks) {
-        split /=2;
+        split /= 2;
         System.out.println("Merge by " + split);
         ArrayList<Block> done2 = new ArrayList<>(blocks.length);
         while (done2.size() < blocks.length) {
@@ -51,9 +49,10 @@ public class Row2 extends Row {
         }
 
         Aqua.syncPositions(done2, blocks);
-        final Row2 r = new Row2(blocks, split*2);
+        final Row2 r = new Row2(blocks, split * 2);
         return r;
     }
+
     public void deriveIter(int split, ArrayList<Block> done, Runnable onEnd) {
         if (done.size() < blocks.length) {
             // Split step in the actual merge sort
@@ -79,20 +78,18 @@ public class Row2 extends Row {
         final LinkedList<Block> target = new LinkedList<Block>();
 
         compareOnce(left, right, target, () -> {
-            putRemaining(left, target, () -> {
-                putRemaining(right, target, () -> onEnd.accept(target));
+            takeAll(left, target, () -> {
+                takeAll(right, target, () -> onEnd.accept(target));
             });
         });
     }
 
     static Animator anim = new Animator(200);
-    static Border greenB = BorderFactory.createLineBorder(Color.green,3);
-    static Border redB = BorderFactory.createLineBorder(Style.LIGHT_RED,3);
 
     public void compareOnce(
-        LinkedList<Block> left, 
-        LinkedList<Block> right, 
-        LinkedList<Block> target,
+            LinkedList<Block> left,
+            LinkedList<Block> right,
+            LinkedList<Block> target,
             Runnable onEnd) {
         if (left.size() > 0 && right.size() > 0) {
             boolean isLeftLess = left.peek().value < right.peek().value;
@@ -112,12 +109,10 @@ public class Row2 extends Row {
             // Dim copy
             Fader.updateBlocks(lower, blocks);
             // Highlight lower value with green border
-            lower.setBorder(greenB);
-            lower.repaint();
+            lower.useGreenBorder();
             anim.schedule(t -> {
                 // Same w/ higher value but with red
-                higher.setBorder(redB);
-                higher.repaint();
+                higher.useRedBorder();
 
                 anim.schedule(tt -> {
                     // Show the equivalent value in the next row
@@ -125,7 +120,7 @@ public class Row2 extends Row {
                     if (next != null) {
                         show(lower);
                     }
-                    //Repeat comparison with next set of values
+                    // Repeat comparison with next set of values
                     anim.schedule(ttt -> {
                         anim.schedule(tttt -> {
                             compareOnce(left, right, target, onEnd);
@@ -137,18 +132,19 @@ public class Row2 extends Row {
             onEnd.run();
         }
     }
-    
+
     public void show(Block b) {
-        for(var n: next.blocks) {
+        for (var n : next.blocks) {
             if (b.value == n.value) {
                 n.show();
                 anim.schedule(t -> {
-                    b.setBorder(Block.DEFAULT_BORDER);
+                    b.useDefaultBorder();
                     b.dim();
                 });
             }
         }
     }
+
     public static LinkedList<Block> arrayToLinkedList(Block[] ts) {
         var ll = new LinkedList<Block>();
         for (var t : ts) {
@@ -157,26 +153,26 @@ public class Row2 extends Row {
         return ll;
     }
 
-    public static int putRemaining(Block[] target, int targetI, Block[] source, int index) {
-        while (index < source.length) {
-            target[targetI++] = source[index++];
-        }
-
-        return targetI;
-    }
-
-    public void putRemaining(LinkedList<Block> source, LinkedList<Block> target, Runnable after) {
+    public void takeAll(LinkedList<Block> source, LinkedList<Block> target, Runnable after) {
         anim.every(t -> {
-            if (source.isEmpty()) {
+            if(!takeOne(source, target)) {
                 t.cancel();
                 after.run();
-            } else {
-                Block b = source.poll();
-                b.setBorder(greenB);
-                show(b);
-                b.repaint();
-                target.add(b);
             }
         }, 0);
+    }
+
+    /**
+     * @return whether an element was taken from the source
+     */
+    public boolean takeOne(LinkedList<Block> source, LinkedList<Block> target) {
+        if (source.isEmpty()) {
+            return false;
+        }
+        Block b = source.poll();
+        b.useGreenBorder();
+        show(b);
+        target.add(b);
+        return true;
     }
 }

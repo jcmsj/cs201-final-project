@@ -11,19 +11,25 @@ import Style.Style;
 public class Block extends Box {
     public static float DEFAULT_FONT_SIZE = 40f;
     public int value;
-    static final int side = 15; 
+    static final int side = 15;
     public Color shownColor;
     public BlockLabel label;
-    public static Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(3,3,3,3);
+    public final static Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(3, 3, 3, 3);
+    public final static Border greenB = BorderFactory.createLineBorder(Color.green, 3);
+    public final static Border redB = BorderFactory.createLineBorder(Style.LIGHT_RED, 3);
+
     public enum STATE {
         INVI,
         SHOWN,
         DIMMED
     }
+
     public STATE state = STATE.SHOWN;
+
     public Block(int value) {
         this(value, DEFAULT_FONT_SIZE);
     }
+
     public Block(int value, float fontSize) {
         this.value = value;
         label = new BlockLabel(value, fontSize);
@@ -36,6 +42,7 @@ public class Block extends Box {
         state = STATE.INVI;
         label.setForeground(Style.DARK_RED);
     }
+
     public void setState(STATE state) {
         switch (state) {
             case DIMMED:
@@ -52,6 +59,7 @@ public class Block extends Box {
                 break;
         }
     }
+
     public void nextState() {
         switch (state) {
             case DIMMED:
@@ -84,6 +92,21 @@ public class Block extends Box {
         }
     }
 
+
+    public void useGreenBorder() {
+        setBorder(greenB);
+        repaint();
+    }
+
+    public void useRedBorder() {
+        setBorder(redB);
+        repaint();
+    }
+
+    public void useDefaultBorder() {
+        setBorder(DEFAULT_BORDER);
+        repaint();
+    }
     public void dim() {
         state = STATE.DIMMED;
         label.setForeground(Style.reddish2);
@@ -141,7 +164,7 @@ public class Block extends Box {
 
     public static Block[] asBlocks(int[] ints, float fontSize) {
         Block[] blocks = new Block[ints.length];
-        for(int i =0 ; i< ints.length; i++) {
+        for (int i = 0; i < ints.length; i++) {
             blocks[i] = new Block(ints[i], fontSize);
         }
         return blocks;
