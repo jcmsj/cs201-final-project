@@ -1,4 +1,5 @@
 package util;
+
 import java.awt.Component;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,12 +26,14 @@ public class Animator extends Timer {
     public void every(TimerTask task, int delay) {
         scheduleAtFixedRate(task, delay, interval);
     }
+
     /**
      * executes the task every {@link Animator#interval} ms
      */
     public void every(Consumer<TimerTask> task, int delay) {
         scheduleAtFixedRate(toTask(task), delay, interval);
     }
+
     public void schedule(TimerTask task) {
         schedule(task, interval);
     }
@@ -47,8 +50,13 @@ public class Animator extends Timer {
             }
         };
     }
+
     public void schedule(Consumer<TimerTask> task) {
         schedule(toTask(task));
+    }
+
+    public void schedule(Runnable task) {
+        schedule(toTask(t -> task.run()));
     }
 
     public void schedule(Consumer<TimerTask> task, Runnable after) {
@@ -60,8 +68,10 @@ public class Animator extends Timer {
             }
         });
     }
+
     /**
-     * Attaches a listener to the target. Then, when an event happens, the task is run after
+     * Attaches a listener to the target. Then, when an event happens, the task is
+     * run after
      * {@link Animator#interval}
      */
     public void onPress(int keyCode, Component target, Consumer<TimerTask> task) {

@@ -91,46 +91,44 @@ public class Row2 extends Row {
             LinkedList<Block> right,
             LinkedList<Block> target,
             Runnable onEnd) {
-        if (left.size() > 0 && right.size() > 0) {
-            boolean isLeftLess = left.peek().value < right.peek().value;
-            Block lower, higher;
-            if (isLeftLess) {
-                lower = left.poll();
-            } else {
-                lower = right.poll();
-            }
-            if (isLeftLess) {
-                higher = right.peek();
-            } else {
-                higher = left.peek();
-            }
-            target.add(lower);
+        if (left.size() <= 0 || right.size() <= 0) {
+            onEnd.run();
+            return;
+        }
+        boolean isLeftLess = left.peek().value < right.peek().value;
+        Block lower, higher;
+        if (isLeftLess) {
+            lower = left.poll();
+        } else {
+            lower = right.poll();
+        }
+        if (isLeftLess) {
+            higher = right.peek();
+        } else {
+            higher = left.peek();
+        }
+        target.add(lower);
 
-            // Dim copy
-            Fader.updateBlocks(lower, blocks);
-            // Highlight lower value with green border
-            lower.useGreenBorder();
-            anim.schedule(t -> {
-                // Same w/ higher value but with red
-                higher.useRedBorder();
+        // Dim copy
+        Fader.updateBlocks(lower, blocks);
+        // Highlight lower value with green border
+        lower.useGreenBorder();
+        anim.schedule(() -> {
+            // Same w/ higher value but with red
+            higher.useRedBorder();
 
-                anim.schedule(tt -> {
-                    // Show the equivalent value in the next row
-                    // And dim the same value in the current row
-                    if (next != null) {
-                        show(lower);
-                    }
-                    // Repeat comparison with next set of values
-                    anim.schedule(ttt -> {
-                        anim.schedule(tttt -> {
-                            compareOnce(left, right, target, onEnd);
-                        });
-                    });
+            anim.schedule(() -> {
+                // Show the equivalent value in the next row
+                // And dim the same value in the current row
+                if (next != null) {
+                    show(lower);
+                }
+                // Repeat comparison with next set of values
+                anim.schedule(() -> {
+                    compareOnce(left, right, target, onEnd);
                 });
             });
-        } else {
-            onEnd.run();
-        }
+        });
     }
 
     public void show(Block b) {
@@ -147,7 +145,7 @@ public class Row2 extends Row {
 
     public void takeAll(LinkedList<Block> source, LinkedList<Block> target, Runnable after) {
         anim.every(t -> {
-            if(!takeOne(source, target)) {
+            if (!takeOne(source, target)) {
                 t.cancel();
                 after.run();
             }
