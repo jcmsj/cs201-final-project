@@ -29,8 +29,8 @@ public class Aqua {
     public static boolean allTwos(LinkedList<Integer> ints) {
         return ints.stream().allMatch(t -> t == 2);
     }
-    /**
-     * Does the actual merge step in merge sort
+     /**
+     * Does the actual merge step with animation
      */
     public static void merge(Block[] left, Block[] right, Block[] target) {
         int i = 0, l = 0, r = 0; // indices
@@ -39,15 +39,21 @@ public class Aqua {
         while (l < left.length && r < right.length) {
             target[i++] = left[l].value < right[r].value ? left[l++] : right[r++];
         }
-        // Put the rest
-        while (l < left.length) {
-            target[i++] = left[l++];
-        }
-        while (r < right.length) {
-            target[i++] = right[r++];
-        }
+
+        i = putRemaining(target, i, left, l);
+        putRemaining(target, i, right, r);
     }
 
+    /**
+     * @return target index stop
+     */
+    public static int putRemaining(Block[] target, int targetI, Block[] source, int index) {
+        while (index < source.length) {
+            target[targetI++] = source[index++];
+        }
+        return targetI;
+    }
+    
     public static void syncPositions(ArrayList<Block> sources, Block[] targets) {
         // Sync block positions
         for (int i = 0; i < targets.length; i++) {
