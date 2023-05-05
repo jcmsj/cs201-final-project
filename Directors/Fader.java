@@ -110,7 +110,7 @@ public class Fader extends RowDirector {
         }, 0);
     }
 
-    public void updateBlocks(Block b, Block[] previous) {
+    public static void updateBlocks(Block b, Block[] previous) {
         // Find equivalent block from the previous row that isn't DIMMED
         for (Block p : previous) {
             if (p.state != STATE.DIMMED && b.value == p.value) {

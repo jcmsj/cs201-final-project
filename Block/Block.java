@@ -2,6 +2,9 @@ package Block;
 
 import java.awt.Color;
 
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
 import Style.Style;
 
 /* A movable block with a number */
@@ -11,6 +14,7 @@ public class Block extends Box {
     static final int side = 15; 
     public Color shownColor;
     public BlockLabel label;
+    public static Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(3,3,3,3);
     public enum STATE {
         INVI,
         SHOWN,
@@ -25,6 +29,7 @@ public class Block extends Box {
         label = new BlockLabel(value, fontSize);
         add(label);
         shownColor = label.getForeground();
+        setBorder(DEFAULT_BORDER);
     }
 
     public void hide() {

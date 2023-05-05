@@ -111,11 +111,11 @@ public class RowDirector extends JPanel implements DirectorLike {
         }
         System.out.println("Merge by " + split);
         ArrayList<Block> done = new ArrayList<>(blocks.length);
-        int todo = 0;
-        while (todo < blocks.length) {
+        while (done.size() < blocks.length) {
             // Split step in the actual merge sort
-            final int offset = Math.min(todo + split, blocks.length);
-            Block[] left = Arrays.copyOfRange(blocks, todo, offset);
+            int progress = done.size();
+            final int offset = Math.min(progress + split, blocks.length);
+            Block[] left = Arrays.copyOfRange(blocks, progress, offset);
             final int nextOffset = Math.min(offset + split, blocks.length);
             Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
             Block[] sorted = new Block[left.length + right.length];
@@ -125,7 +125,6 @@ public class RowDirector extends JPanel implements DirectorLike {
                 // Important: duplicate block
                 done.add(b.dup());
             }
-            todo += sorted.length;
         }
 
         Aqua.syncPositions(done, blocks);

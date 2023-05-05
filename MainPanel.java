@@ -12,7 +12,7 @@ import Block.Editor;
 import Block.ACTIONS;
 import Directors.AutoFader;
 import Directors.BlockFader;
-import Directors.Fader;
+import Directors.RowFader;
 import Style.Style;
 import util.ANIM_MODE;
 import util.CellRenderer;
@@ -108,7 +108,7 @@ public class MainPanel extends KPanel {
             case MANUAL:
                 return new BlockFader(ints);
             case SEMI:
-                return new Fader(ints);
+                return new RowFader(ints);
             default:
                 return new AutoFader(ints);
         }
