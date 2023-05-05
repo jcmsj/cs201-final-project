@@ -66,4 +66,12 @@ public class Aqua {
             targets[i] = sources[i];
         }
     }
+    
+    public static LinkedList<Block> arrayToLinkedList(Block[] ts) {
+        var ll = new LinkedList<Block>();
+        for (var t : ts) {
+            ll.add(t);
+        }
+        return ll;
+    }
 }

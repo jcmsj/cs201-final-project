@@ -73,8 +73,8 @@ public class Row2 extends Row {
     }
 
     public void m2(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
-        final LinkedList<Block> left = arrayToLinkedList(_left);
-        final LinkedList<Block> right = arrayToLinkedList(_right);
+        final LinkedList<Block> left = Aqua.arrayToLinkedList(_left);
+        final LinkedList<Block> right = Aqua.arrayToLinkedList(_right);
         final LinkedList<Block> target = new LinkedList<Block>();
 
         compareOnce(left, right, target, () -> {
@@ -143,14 +143,6 @@ public class Row2 extends Row {
                 });
             }
         }
-    }
-
-    public static LinkedList<Block> arrayToLinkedList(Block[] ts) {
-        var ll = new LinkedList<Block>();
-        for (var t : ts) {
-            ll.add(t);
-        }
-        return ll;
     }
 
     public void takeAll(LinkedList<Block> source, LinkedList<Block> target, Runnable after) {
