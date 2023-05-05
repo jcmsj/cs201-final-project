@@ -1,15 +1,14 @@
 package Directors;
 
-public class AutoFader extends Fader {
+public class AutoFader extends RowFader {
     public AutoFader(int[] ints) {
         super(ints);
-        anim.interval*=2;
     }
 
     @Override
     public void mergeSort() {
         super.mergeSort();
-        anim.schedule(t -> keepAnimating(), 1000);
+        anim.schedule(t -> nextRow(() -> keepAnimating()), 500);
     }
 
     public void keepAnimating() {

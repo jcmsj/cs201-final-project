@@ -25,10 +25,9 @@ public class Row2 extends Row {
     }
 
     Row2 next;
-    public void derive(int split) {
+    public void derive(int split, Runnable onEnd) {
         System.out.println("Split by " + split);
-        deriveIter(split/2, done);
-        /* , () -> derive(split*2) */
+        deriveIter(split/2, done, onEnd);
     }
 
     public static Row2 normalMerge(int split, Block[] blocks) {
@@ -55,7 +54,7 @@ public class Row2 extends Row {
         final Row2 r = new Row2(blocks, split*2);
         return r;
     }
-    public void deriveIter(int split, ArrayList<Block> done/* , Runnable onEnd */) {
+    public void deriveIter(int split, ArrayList<Block> done, Runnable onEnd) {
         if (done.size() < blocks.length) {
             // Split step in the actual merge sort
             int progress = done.size();
@@ -65,11 +64,13 @@ public class Row2 extends Row {
             final Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
             m2(left, right, target -> {
                 done.addAll(target);
-                deriveIter(split, done);
+                deriveIter(split, done, onEnd);
             });
-        }/*  else {
-            onEnd.run();
-        } */
+        } else {
+            if (onEnd != null) {
+                onEnd.run();
+            }
+        }
     }
 
     public void m2(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
