@@ -6,7 +6,7 @@ import Style.Style;
 
 /* A movable block with a number */
 public class Block extends Box {
-    public static float DEFAULT_FONT_SIZE = 30f;
+    public static float DEFAULT_FONT_SIZE = 40f;
     public int value;
     static final int side = 15; 
     public Color shownColor;

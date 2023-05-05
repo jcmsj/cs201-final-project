@@ -1,7 +1,6 @@
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -10,7 +9,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import Block.Editor;
-import Block.Editor.ACTIONS;
+import Block.ACTIONS;
 import Directors.AutoFader;
 import Directors.BlockFader;
 import Directors.Fader;
@@ -20,7 +19,7 @@ import util.CellRenderer;
 import util.KPanel;
 import util.On;
 
-public class MainPanel extends JPanel {
+public class MainPanel extends KPanel {
     public Editor editor;
     static final int DEFAULT_BORDER_SIZE = 30;
     ANIM_MODE mode = ANIM_MODE.AUTO;
@@ -60,7 +59,7 @@ public class MainPanel extends JPanel {
             setAlignmentX(CENTER_ALIGNMENT);
             setBorder(KPanel.paddedBorder(Style.yellowish.darker(), 1, 8));
             JLabel modeTitle = new JLabel("Animation mode");
-            modeTitle.setFont(modeTitle.getFont().deriveFont(25f));
+            modeTitle.setFont(modeTitle.getFont().deriveFont(40f));
             modeTitle.setAlignmentX(CENTER_ALIGNMENT);
             add(modeTitle);
             DefaultListModel<ANIM_MODE> model = new DefaultListModel<>();
@@ -70,8 +69,9 @@ public class MainPanel extends JPanel {
             JList<ANIM_MODE> list = new JList<>(model);
             list.setCellRenderer(new CellRenderer());
             list.setAlignmentX(CENTER_ALIGNMENT);
+
+            //Updates mode field
             list.addListSelectionListener(l -> {
-                System.out.println();
                 mode = list.getSelectedValue();
             });
             list.setSelectedIndex(0);
@@ -80,6 +80,7 @@ public class MainPanel extends JPanel {
     }
 
     public MainPanel() {
+        super("./assets/stage.png");
         setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
         editor = new Editor();
         editor.add(Box.createVerticalStrut(50));

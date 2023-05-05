@@ -9,7 +9,7 @@ public class AutoFader extends Fader {
     @Override
     public void mergeSort() {
         super.mergeSort();
-        keepAnimating();
+        anim.schedule(t -> keepAnimating(), 1000);
     }
 
     public void keepAnimating() {

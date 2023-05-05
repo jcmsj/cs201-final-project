@@ -6,11 +6,8 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
-
-import util.KPanel;
 
 public class Style {
     /* Put colors as static members here */
@@ -40,17 +37,15 @@ public class Style {
 
     /* Change component values here */
     public static void init() {
-        alagard = registerFont("./assets/alagard.ttf").deriveFont(13f);
+        alagard = registerFont("./assets/alagard.ttf").deriveFont(18f);
         // JPanel
         UIManager.put("Panel.font", alagard);
         UIManager.put("Panel.background", wine);
         // JLabel
         UIManager.put("Label.font", alagard);
         UIManager.put("Label.foreground", yellowish);
-
         // JFrame
         UIManager.put("Frame.background", yellowish);
-
         // JButton
         UIManager.put("Button.foreground", yellowish);
         UIManager.put("Button.border", BorderFactory.createLineBorder(yellowish.darker()));
@@ -58,7 +53,6 @@ public class Style {
         UIManager.put("Button.focus", Color.TRANSLUCENT);
         UIManager.put("Button.select", yellowish);
         UIManager.put("Button.font", alagard);
-
         // JRadioButton
         UIManager.put("RadioButton.foreground", yellowish);
         UIManager.put("RadioButton.border", BorderFactory.createLineBorder(yellowish));
@@ -66,13 +60,11 @@ public class Style {
         UIManager.put("RadioButton.focus", Color.TRANSLUCENT);
         UIManager.put("RadioButton.select", yellowish);
         UIManager.put("RadioButton.font", alagard);
-
         // JTextField
         UIManager.put("TextField.background", DARK_RED);
         UIManager.put("TextField.font", alagard);
         UIManager.put("TextField.foreground", yellowish);
         UIManager.put("TextField.caretForeground", yellowish);
-
         // JList
         UIManager.put("List.background", wine);
         UIManager.put("List.foreground", yellowish);

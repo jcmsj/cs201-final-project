@@ -1,5 +1,6 @@
 package util;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
@@ -17,10 +18,12 @@ public class CellRenderer extends JPanel implements ListCellRenderer<ANIM_MODE> 
     Border focusedBorder;
     CompoundBorder selectedBorder;
     private CompoundBorder focusedAndSelectedBorder;
+    public final static Color CELL_COLOR = Color.decode("#E2DCDB");
 
     public CellRenderer() {
         label = new JLabel();
-        label.setFont(label.getFont().deriveFont(20f));
+        label.setForeground(CELL_COLOR);
+        label.setFont(label.getFont().deriveFont(25f));
         border = KPanel.paddedBorder(Style.wine, 2, 5);
         focusedBorder = KPanel.paddedBorder(Style.yellowish.darker(), 2,5);
         focusedAndSelectedBorder = KPanel.paddedBorder(Style.yellowish, 2,5);

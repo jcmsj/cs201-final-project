@@ -34,6 +34,11 @@ public class Animator extends Timer {
     public void schedule(TimerTask task) {
         schedule(task, interval);
     }
+
+    public void schedule(Consumer<TimerTask> task, int _interval) {
+        schedule(toTask(task), _interval);
+    }
+
     public TimerTask toTask(Consumer<TimerTask> cb) {
         return new TimerTask() {
             @Override

@@ -30,13 +30,6 @@ public class Editor extends JPanel implements ActionListener {
 	int MIN_TEXT_FIELDS = 2;
 	Consumer<int[]> consumer;
 
-	public enum ACTIONS {
-		ADD,
-		REM,
-		PLAY,
-		RESET
-	}
-
 	public static class PButton extends IconButton {
 		final static Border focused = BorderFactory.createLineBorder(Style.yellowish);
 
@@ -50,6 +43,7 @@ public class Editor extends JPanel implements ActionListener {
 
 	static class BlocksPanel extends JPanel {
 		public BlocksPanel() {
+			setOpaque(false);
 			var flow = new FlowLayout();
 			flow.setHgap(30);
 			setLayout(flow);
@@ -68,6 +62,8 @@ public class Editor extends JPanel implements ActionListener {
 
 	public Editor() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setOpaque(false);
+		setBorder(Row.DEFAULT_BORDER);
 		adder = new GreenBlock();
 		adder.setActionCommand(ACTIONS.ADD.toString());
 		adder.setToolTipText("Add a block");
@@ -78,6 +74,7 @@ public class Editor extends JPanel implements ActionListener {
 		textFields = new LinkedList<InputBlock>();
 		// set up the panel, arrange blocks horizontally
 		var inner = new JPanel();
+		inner.setOpaque(false);
 		blocksPanel = new BlocksPanel();
 		inner.add(blocksPanel);
 		inner.add(adder);
@@ -87,6 +84,8 @@ public class Editor extends JPanel implements ActionListener {
 			removerRow = new JPanel(null);
 			removerRow.setPreferredSize(new Dimension(1, 100));
 			removerRow.add(remover);
+			removerRow.setOpaque(false);
+
 			add(removerRow);
 		}
 		JPanel btnGroup = new JPanel(new GridLayout(1, 3));

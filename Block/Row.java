@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 /**
  * Layouts Block components in a Row and adds dividers at intervals based on
@@ -20,7 +21,7 @@ public class Row extends JPanel {
     public final Block[] blocks;
     private int index = 0; // Determines which block would be painted
     private int counter = 1; // Determines when to place dividers
-
+    public final static Border DEFAULT_BORDER = BorderFactory.createEmptyBorder(15, 5, 15, 5);
     private final LinkedList<Component> dividers = new LinkedList<>();
 
     public int getIndex() {
@@ -38,7 +39,7 @@ public class Row extends JPanel {
      */
     public Row(Block[] blocks, LinkedList<Integer> splits, int xGAP) {
         super(new FlowLayout(FlowLayout.CENTER));
-        setBorder(BorderFactory.createEmptyBorder(15, 5, 15, 5));
+        setBorder(DEFAULT_BORDER);
         setOpaque(false);
         this.splits = splits;
         this.xGAP = xGAP;

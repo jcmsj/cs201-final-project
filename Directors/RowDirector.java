@@ -29,8 +29,8 @@ public class RowDirector extends JPanel implements DirectorLike {
     }
 
     public RowDirector(Block[] blocks) {
-        // super("./assets/<your-image-file>");
         // use BoxLayout as Rows will be added vertically
+        setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.blocks = blocks;
         setFocusable(true);
