@@ -111,7 +111,6 @@ public class Fader extends RowDirector {
     }
 
     public void updateBlocks(Block b, Block[] previous) {
-        b.show();
         // Find equivalent block from the previous row that isn't DIMMED
         for (Block p : previous) {
             if (p.state != STATE.DIMMED && b.value == p.value) {
@@ -119,5 +118,6 @@ public class Fader extends RowDirector {
                 break;
             }
         }
+        b.show();
     }
 }

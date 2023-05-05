@@ -4,7 +4,6 @@ import Block.Row;
 import util.On;
 import java.awt.event.KeyEvent;
 
-
 /**
  * Controls a row to animate in/out a single block in one activation.
  */
@@ -43,8 +42,6 @@ public class BlockDirector extends RowDirector {
         });
 
         // Activate by pressing left arrow key
-        // TODO: Reverse animation
-        // TODO: Fix, having to activate the key twice to remove row
         On.press(KeyEvent.VK_LEFT, this, ev -> {
             Row r = rows.peekLast();
             if (r == null) {

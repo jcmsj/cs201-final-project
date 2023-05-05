@@ -2,25 +2,17 @@ package Directors;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Stack;
+
 import Block.Block;
 import Block.Row;
 import Block.Block.STATE;
+import util.TwoStack;
 
 import java.awt.event.KeyEvent;
 
 public class BlockFader extends Fader {
-
     public BlockFader(int[] ints) {
         super(ints);
-    }
-
-    public class TwoStack<E> extends Stack<E> {
-        /* Atomically pushes two elements */
-        public void pushTwo(E first, E second) {
-            push(first);
-            push(second);
-        }
     }
 
     private Iterator<Block> forwardIter;
