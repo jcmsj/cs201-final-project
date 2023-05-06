@@ -41,11 +41,5 @@ public class RowFader extends Fader {
         // Activate by pressing right arrow key
         anim.onPress(KeyEvent.VK_RIGHT, this,
                 t -> nextRow(null));
-
-        // Activate by pressing left arrow key
-
-        /* anim.onPress(KeyEvent.VK_LEFT, this,
-                t -> undoLastRow()); */
-
     }
 }

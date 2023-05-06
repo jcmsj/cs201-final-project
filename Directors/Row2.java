@@ -61,9 +61,11 @@ public class Row2 extends Row {
             final Block[] left = Arrays.copyOfRange(blocks, progress, offset);
             final int nextOffset = Math.min(offset + split, blocks.length);
             final Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
-            m2(left, right, target -> {
+            mergeStep(left, right, target -> {
                 done.addAll(target);
-                deriveIter(split, done, onEnd);
+                anim.schedule(() -> {
+                    deriveIter(split, done, onEnd);
+                });
             });
         } else {
             if (onEnd != null) {
@@ -72,7 +74,7 @@ public class Row2 extends Row {
         }
     }
 
-    public void m2(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
+    public void mergeStep(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
         final LinkedList<Block> left = Aqua.arrayToLinkedList(_left);
         final LinkedList<Block> right = Aqua.arrayToLinkedList(_right);
         final LinkedList<Block> target = new LinkedList<Block>();
@@ -120,25 +122,34 @@ public class Row2 extends Row {
             anim.schedule(() -> {
                 // Show the equivalent value in the next row
                 // And dim the same value in the current row
-                if (next != null) {
-                    show(lower);
-                }
                 // Repeat comparison with next set of values
-                anim.schedule(() -> {
-                    compareOnce(left, right, target, onEnd);
-                });
+                Runnable cb = () -> compareOnce(left, right, target, onEnd);
+                if (next != null) {
+                    show(lower, cb);
+                } else {
+                    anim.schedule(cb);
+                }
             });
         });
     }
 
-    public void show(Block b) {
+    public void dimAndDefault(Block b, Runnable onEnd) {
+        anim.schedule(t -> {
+            b.useDefaultBorder();
+            b.dim();
+            anim.schedule(() -> {
+                if (onEnd != null) {
+                    onEnd.run();
+                }
+            });
+        });
+    }
+
+    public void show(Block b, Runnable onEnd) {
         for (var n : next.blocks) {
             if (b.value == n.value) {
                 n.show();
-                anim.schedule(t -> {
-                    b.useDefaultBorder();
-                    b.dim();
-                });
+                dimAndDefault(b, onEnd);
             }
         }
     }
@@ -161,7 +172,7 @@ public class Row2 extends Row {
         }
         Block b = source.poll();
         b.useGreenBorder();
-        show(b);
+        show(b, () -> dimAndDefault(b, null));
         target.add(b);
         return true;
     }
