@@ -23,7 +23,7 @@ import util.On;
 public class MainPanel extends KPanel {
     public Editor editor;
     static final int DEFAULT_BORDER_SIZE = 30;
-    ANIM_MODE mode = ANIM_MODE.AUTO;
+    ANIM_MODE mode = ANIM_MODE.ALL;
     private JPanel director;
     public JPanel shown;
     private Consumer<int[]> consumer = new Consumer<int[]>() {
@@ -64,10 +64,10 @@ public class MainPanel extends KPanel {
             modeTitle.setAlignmentX(CENTER_ALIGNMENT);
             add(modeTitle);
             DefaultListModel<ANIM_MODE> model = new DefaultListModel<>();
-            model.addElement(ANIM_MODE.AUTO);
-            model.addElement(ANIM_MODE.SEMI);
-            model.addElement(ANIM_MODE.SEMI_OLD);
-            model.addElement(ANIM_MODE.MANUAL);
+            model.addElement(ANIM_MODE.ALL);
+            model.addElement(ANIM_MODE.ROW);
+            model.addElement(ANIM_MODE.ROW_OLD);
+            model.addElement(ANIM_MODE.BLOCK);
             JList<ANIM_MODE> list = new JList<>(model);
             list.setCellRenderer(new CellRenderer());
             list.setAlignmentX(CENTER_ALIGNMENT);
@@ -107,11 +107,11 @@ public class MainPanel extends KPanel {
 
     public JPanel makeEditor(ANIM_MODE m, int[] ints) {
         switch (m) {
-            case MANUAL:
+            case BLOCK:
                 return new BlockFader(ints);
-            case SEMI_OLD:
+            case ROW_OLD:
                 return new Fader(ints);
-            case SEMI:
+            case ROW:
                 return new RowFader(ints);
             default:
                 return new AutoFader(ints);

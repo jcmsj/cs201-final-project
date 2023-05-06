@@ -12,12 +12,6 @@ public class Row2 extends Row {
     ArrayList<Block> done;
     int _split;
 
-    protected static Animator anim = new Animator(200);
-    protected Block lower;
-    protected Block higher;
-    protected LinkedList<Block> left;
-    protected LinkedList<Block> right;
-    protected LinkedList<Block> target;
     public Row2(Block[] blocks, int split) {
         super(blocks, split);
         this._split = split;
@@ -79,31 +73,30 @@ public class Row2 extends Row {
     }
 
     public void m2(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
-        left = Aqua.arrayToLinkedList(_left);
-        right = Aqua.arrayToLinkedList(_right);
-        target = new LinkedList<Block>();
-        final Runnable onFinish = new Runnable() {
-            @Override
-            public void run() {
-                if (left.size() <= 0 || right.size() <= 0) {
-                    takeAll(left, target, () -> {
-                        takeAll(right, target, () -> onEnd.accept(target));
-                    });
-                    return;
-                }
-                compareOnce();
-                showLower();
-                showHigher(() -> showInNext(this));
-            }
-        };
-        onFinish.run();
+        final LinkedList<Block> left = Aqua.arrayToLinkedList(_left);
+        final LinkedList<Block> right = Aqua.arrayToLinkedList(_right);
+        final LinkedList<Block> target = new LinkedList<Block>();
+
+        compareOnce(left, right, target, () -> {
+            takeAll(left, target, () -> {
+                takeAll(right, target, () -> onEnd.accept(target));
+            });
+        });
     }
 
-    public void compareOnce() {
+    static Animator anim = new Animator(200);
+
+    public void compareOnce(
+            LinkedList<Block> left,
+            LinkedList<Block> right,
+            LinkedList<Block> target,
+            Runnable onEnd) {
         if (left.size() <= 0 || right.size() <= 0) {
+            onEnd.run();
             return;
         }
         boolean isLeftLess = left.peek().value < right.peek().value;
+        Block lower, higher;
         if (isLeftLess) {
             lower = left.poll();
         } else {
@@ -115,42 +108,30 @@ public class Row2 extends Row {
             higher = left.peek();
         }
         target.add(lower);
-    }
 
-    public void showLower() {
         // Dim copy
         Fader.updateBlocks(lower, blocks);
         // Highlight lower value with green border
         lower.useGreenBorder();
-    }
-
-    public void showHigher(Runnable onEnd) {
         anim.schedule(() -> {
             // Same w/ higher value but with red
-            if (higher != null) {
-                higher.useRedBorder();
-            }
+            higher.useRedBorder();
+
             anim.schedule(() -> {
-                onEnd.run();
+                // Show the equivalent value in the next row
+                // And dim the same value in the current row
+                if (next != null) {
+                    show(lower);
+                }
+                // Repeat comparison with next set of values
+                anim.schedule(() -> {
+                    compareOnce(left, right, target, onEnd);
+                });
             });
         });
     }
 
-    public void showInNext(Runnable onEnd) {
-        // Show the equivalent value in the next row
-        // And dim the same value in the current row
-        if (next != null) {
-            show(lower);
-        }
-        // Repeat comparison with next set of values
-        anim.schedule(() -> {
-            onEnd.run();
-        });
-    }
-
     public void show(Block b) {
-        if (b == null)
-            return;
         for (var n : next.blocks) {
             if (b.value == n.value) {
                 n.show();

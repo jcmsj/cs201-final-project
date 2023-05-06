@@ -1,22 +1,22 @@
 package util;
 
 public enum ANIM_MODE {
-    AUTO,
-    SEMI,
-    SEMI_OLD,
-    MANUAL;
+    ALL,
+    ROW,
+    ROW_OLD,
+    BLOCK;
 
     @Override
     public String toString() {
         switch (this.ordinal()) {
             case 0:
-                return "Automatic";
+                return "Until Sorted";
             case 1:
-                return "Semi-Automatic";
+                return "By Row";
             case 2:
-                return "Semi-Automatic (Reversible)";
+                return "By Row (Reversible)";
             case 3:
-                return "Manual (Reversible)";
+                return "By block (Reversible)";
             default:
                 return null;
         }
