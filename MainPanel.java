@@ -12,6 +12,7 @@ import Block.Editor;
 import Block.ACTIONS;
 import Directors.AutoFader;
 import Directors.BlockFader;
+import Directors.Fader;
 import Directors.RowFader;
 import Style.Style;
 import util.ANIM_MODE;
@@ -65,12 +66,13 @@ public class MainPanel extends KPanel {
             DefaultListModel<ANIM_MODE> model = new DefaultListModel<>();
             model.addElement(ANIM_MODE.AUTO);
             model.addElement(ANIM_MODE.SEMI);
+            model.addElement(ANIM_MODE.SEMI_OLD);
             model.addElement(ANIM_MODE.MANUAL);
             JList<ANIM_MODE> list = new JList<>(model);
             list.setCellRenderer(new CellRenderer());
             list.setAlignmentX(CENTER_ALIGNMENT);
 
-            //Updates mode field
+            // Updates mode field
             list.addListSelectionListener(l -> {
                 mode = list.getSelectedValue();
             });
@@ -107,6 +109,8 @@ public class MainPanel extends KPanel {
         switch (m) {
             case MANUAL:
                 return new BlockFader(ints);
+            case SEMI_OLD:
+                return new Fader(ints);
             case SEMI:
                 return new RowFader(ints);
             default:

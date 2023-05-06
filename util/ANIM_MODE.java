@@ -1,7 +1,9 @@
 package util;
+
 public enum ANIM_MODE {
     AUTO,
     SEMI,
+    SEMI_OLD,
     MANUAL;
 
     @Override
@@ -12,7 +14,9 @@ public enum ANIM_MODE {
             case 1:
                 return "Semi-Automatic";
             case 2:
-                return "Manual";
+                return "Semi-Automatic (Reversible)";
+            case 3:
+                return "Manual (Reversible)";
             default:
                 return null;
         }
