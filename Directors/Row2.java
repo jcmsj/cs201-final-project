@@ -12,6 +12,12 @@ public class Row2 extends Row {
     ArrayList<Block> done;
     int _split;
 
+    protected static Animator anim = new Animator(200);
+    protected Block lower;
+    protected Block higher;
+    protected LinkedList<Block> left;
+    protected LinkedList<Block> right;
+    protected LinkedList<Block> target;
     public Row2(Block[] blocks, int split) {
         super(blocks, split);
         this._split = split;
@@ -72,15 +78,6 @@ public class Row2 extends Row {
         }
     }
 
-    public static record Trio(LinkedList<Block> left,
-            LinkedList<Block> right,
-            LinkedList<Block> target) {
-    };
-
-    public static record Duo(Block lower,
-            Block higher) {
-    };
-
     public void m2(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
         left = Aqua.arrayToLinkedList(_left);
         right = Aqua.arrayToLinkedList(_right);
@@ -101,14 +98,6 @@ public class Row2 extends Row {
         };
         onFinish.run();
     }
-
-    static Animator anim = new Animator(200);
-
-    Block lower;
-    Block higher;
-    private LinkedList<Block> left;
-    private LinkedList<Block> right;
-    private LinkedList<Block> target;
 
     public void compareOnce() {
         if (left.size() <= 0 || right.size() <= 0) {
