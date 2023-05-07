@@ -17,11 +17,6 @@ public class RowFader extends Fader {
         add(r2);
     }
 
-    private boolean animating = false;
-    public void unlock() {
-        animating = false;
-    }
-
     @Override
     public void nextRow(Runnable cb) {
         if (animating)
@@ -31,7 +26,7 @@ public class RowFader extends Fader {
             System.out.println("DONE SORTING!");
             return;
         }
-        animating = true;
+        lock();
         add(r2);
         split *= 2;
         var next = Row2.normalMerge(split, blocks);

@@ -36,6 +36,7 @@ public class Fader extends RowDirector {
     }
 
     protected int rowI = 1;
+    protected boolean animating;
 
     @Override
     public void addListeners() {
@@ -43,33 +44,7 @@ public class Fader extends RowDirector {
         anim.onPress(KeyEvent.VK_RIGHT, this, t -> nextRow(null));
 
         // Activate by pressing left arrow key
-        anim.onPress(KeyEvent.VK_LEFT, this, t -> {
-            if (rowI <= 1) {
-                rowI = 1;
-                System.out.println("Animation back to start");
-                return;
-            }
-
-            rowI--;
-            Row prev = rows.get(rowI - 1);
-            Row cur = rows.get(rowI);
-            Iterator<Block> iter = Arrays.stream(cur.blocks).iterator();
-            anim.every(tt -> {
-                if (iter.hasNext()) {
-                    Block b = iter.next();
-                    b.hide();
-                    // Find equivalent block from previous row that isn't shown
-                    for (Block p : prev.blocks) {
-                        if (p.state != STATE.SHOWN && b.value == p.value) {
-                            p.show();
-                            break;
-                        }
-                    }
-                } else {
-                    tt.cancel();
-                }
-            }, 0);
-        });
+        anim.onPress(KeyEvent.VK_LEFT, this, t -> prevRow());
     }
 
     @Override
@@ -86,7 +61,48 @@ public class Fader extends RowDirector {
         r.revealAll();
     }
 
+    public void unlock() {
+        animating = false;
+    }
+
+    public void lock() {
+        animating = true;
+    }
+    public void prevRow() {
+        if (animating)
+            return;
+        if (rowI <= 1) {
+            rowI = 1;
+            System.out.println("Animation back to start");
+            return;
+        }
+        lock();
+        rowI--;
+        Row prev = rows.get(rowI - 1);
+        Row cur = rows.get(rowI);
+        Iterator<Block> iter = Arrays.stream(cur.blocks).iterator();
+        anim.every(tt -> {
+            if (iter.hasNext()) {
+                Block b = iter.next();
+                b.hide();
+                // Find equivalent block from previous row that isn't shown
+                for (Block p : prev.blocks) {
+                    if (p.state != STATE.SHOWN && b.value == p.value) {
+                        p.show();
+                        break;
+                    }
+                }
+            } else {
+                tt.cancel();
+                unlock();
+            }
+        }, 0);
+    }
+
     public void nextRow(Runnable cb) {
+        if (animating)
+            return;
+        animating = true;
         if (rowI >= rows.size()) {
             System.out.println("Animation end");
             return;
@@ -94,7 +110,11 @@ public class Fader extends RowDirector {
         Row prev = rows.get(rowI - 1);
         Row cur = rows.get(rowI);
         var iter = Arrays.stream(cur.blocks).iterator();
-        handleRow(iter, prev.blocks, cb);
+        handleRow(iter, prev.blocks, () -> {
+            if (cb != null)
+                cb.run();
+            animating = false;
+        });
         rowI++;
     }
 
