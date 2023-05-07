@@ -1,3 +1,5 @@
+package App;
+
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
@@ -8,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
 import Block.Editor;
 import Block.ACTIONS;
 import Directors.AutoFader;
@@ -82,7 +85,7 @@ public class MainPanel extends KPanel {
     }
 
     public MainPanel() {
-        super("./assets/stage.png");
+        super("assets/stage.png");
         setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
         editor = new Editor();
         editor.add(Box.createVerticalStrut(50));

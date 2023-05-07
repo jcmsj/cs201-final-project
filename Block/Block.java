@@ -38,7 +38,7 @@ public class Block extends Box {
         setBorder(DEFAULT_BORDER);
     }
 
-    public void hide() {
+    public void hideMe() {
         state = STATE.INVI;
         label.setForeground(Style.DARK_RED);
     }
@@ -49,10 +49,10 @@ public class Block extends Box {
                 dim();
                 break;
             case INVI:
-                hide();
+                hideMe();
                 break;
             case SHOWN:
-                show();
+                showMe();
                 break;
             default:
                 System.out.println("Unhandled state=" + state);
@@ -112,7 +112,7 @@ public class Block extends Box {
         label.setForeground(Style.reddish2);
     }
 
-    public void show() {
+    public void showMe() {
         state = STATE.SHOWN;
         label.setForeground(shownColor);
     }

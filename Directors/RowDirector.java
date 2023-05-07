@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+
 import Block.Block;
 import Block.Row;
 import util.Animator;

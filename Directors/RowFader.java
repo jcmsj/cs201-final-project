@@ -31,7 +31,7 @@ public class RowFader extends Fader {
         split *= 2;
         var next = Row2.normalMerge(split, blocks);
         for (var b : next.blocks) {
-            b.hide();
+            b.hideMe();
         }
         add(next);
         r2.next = next;

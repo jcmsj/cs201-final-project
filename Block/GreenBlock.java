@@ -7,7 +7,7 @@ import util.IconButton;
 
 public class GreenBlock extends IconButton {
     public GreenBlock() {
-        super("../assets/plus.png");
+        super("assets/plus.png");
         setBackground(Style.DARK_GREEN);
         var inner = new EmptyBorder(16, 8, 16, 8);
         setBorder(inner);

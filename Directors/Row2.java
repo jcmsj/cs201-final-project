@@ -149,7 +149,7 @@ public class Row2 extends Row {
     public void show(Block b, Runnable onEnd) {
         for (var n : next.blocks) {
             if (n.state != STATE.SHOWN && b.value == n.value) {
-                n.show();
+                n.showMe();
                 dimAndDefault(b, onEnd);
                 break;
             }

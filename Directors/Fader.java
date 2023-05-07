@@ -52,7 +52,7 @@ public class Fader extends RowDirector {
         // If not the 1st row, set blocks as invisible
         if (split > 1) {
             for (var b : r.blocks) {
-                b.hide();
+                b.hideMe();
                 r.next();
             }
             return;
@@ -84,11 +84,11 @@ public class Fader extends RowDirector {
         anim.every(tt -> {
             if (iter.hasNext()) {
                 Block b = iter.next();
-                b.hide();
+                b.hideMe();
                 // Find equivalent block from previous row that isn't shown
                 for (Block p : prev.blocks) {
                     if (p.state != STATE.SHOWN && b.value == p.value) {
-                        p.show();
+                        p.showMe();
                         break;
                     }
                 }
@@ -138,6 +138,6 @@ public class Fader extends RowDirector {
                 break;
             }
         }
-        b.show();
+        b.showMe();
     }
 }

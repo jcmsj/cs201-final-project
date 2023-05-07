@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
@@ -24,7 +23,8 @@ public class Style {
 
     public static Font registerFont(String path) {
         try {
-            var font = Font.createFont(Font.TRUETYPE_FONT, new File(path));
+            var font = Font.createFont(Font.TRUETYPE_FONT, Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream(path));
             GraphicsEnvironment
                     .getLocalGraphicsEnvironment()
                     .registerFont(font);
@@ -37,7 +37,7 @@ public class Style {
 
     /* Change component values here */
     public static void init() {
-        alagard = registerFont("./assets/alagard.ttf").deriveFont(18f);
+        alagard = registerFont("assets/alagard.ttf").deriveFont(18f);
         // JPanel
         UIManager.put("Panel.font", alagard);
         UIManager.put("Panel.background", wine);

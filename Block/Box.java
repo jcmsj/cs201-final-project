@@ -10,7 +10,7 @@ import util.KPanel;
  * Contains the look of a Block
  */
 public class Box extends KPanel {
-    final static Image focusedImage = new ImageIcon("./assets/f-block.png").getImage();
+    final static Image focusedImage = new ImageIcon("assets/f-block.png").getImage();
     Image unfocusedImage;
 
     public MouseListener hoverer = new MouseListener() {
@@ -50,7 +50,7 @@ public class Box extends KPanel {
     }
     
     public Box() {
-        super("./assets/block.png");
+        super("assets/block.png");
         unfocusedImage = image;
         addMouseListener(hoverer);
     }

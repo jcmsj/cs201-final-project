@@ -67,10 +67,10 @@ public class Editor extends JPanel implements ActionListener {
 		adder = new GreenBlock();
 		adder.setActionCommand(ACTIONS.ADD.toString());
 		adder.setToolTipText("Add a block");
-		remover = new PButton("../assets/x.png", ACTIONS.REM, "Remove above block");
+		remover = new PButton("assets/x.png", ACTIONS.REM, "Remove above block");
 		remover.setBounds(0, 0, 50, 50);
-		submitter = new PButton("../assets/play.png", ACTIONS.PLAY, "Start sorting!");
-		resetter = new PButton("../assets/reset.png", ACTIONS.RESET, "Clear blocks");
+		submitter = new PButton("assets/play.png", ACTIONS.PLAY, "Start sorting!");
+		resetter = new PButton("assets/reset.png", ACTIONS.RESET, "Clear blocks");
 		textFields = new LinkedList<InputBlock>();
 		// set up the panel, arrange blocks horizontally
 		var inner = new JPanel();

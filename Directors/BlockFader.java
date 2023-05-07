@@ -29,7 +29,7 @@ public class BlockFader extends Fader {
             if (removed.size() > 0) {
                 // Pop two from `removed` but repush two `actions`
                 Block current = removed.pop();
-                current.show();
+                current.showMe();
                 Block previous = removed.pop();
                 previous.dim();
                 actions.pushTwo(previous, current);
@@ -50,7 +50,7 @@ public class BlockFader extends Fader {
                 rowI++;
             }
             Block current = forwardIter.next();
-            current.show();
+            current.showMe();
 
             // Find equivalent block from the previous row that isn't DIMMED
             for (Block previous : prev.blocks) {
@@ -70,9 +70,9 @@ public class BlockFader extends Fader {
             }
             // Pop two from `actions` but repush to `removed`
             Block current = actions.pop();
-            current.hide();
+            current.hideMe();
             Block previous = actions.pop();
-            previous.show();
+            previous.showMe();
             removed.pushTwo(previous, current);
         });
     }
