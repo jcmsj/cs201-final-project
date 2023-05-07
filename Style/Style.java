@@ -7,6 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
+import util.Loader;
 
 public class Style {
     /* Put colors as static members here */
@@ -23,8 +24,7 @@ public class Style {
 
     public static Font registerFont(String path) {
         try {
-            var font = Font.createFont(Font.TRUETYPE_FONT, Thread.currentThread().getContextClassLoader()
-            .getResourceAsStream(path));
+            var font = Font.createFont(Font.TRUETYPE_FONT, Loader.stream(path));
             GraphicsEnvironment
                     .getLocalGraphicsEnvironment()
                     .registerFont(font);

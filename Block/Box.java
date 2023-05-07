@@ -3,14 +3,14 @@ package Block;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.ImageIcon;
 import util.KPanel;
+import util.Loader;
 
 /* 
  * Contains the look of a Block
  */
 public class Box extends KPanel {
-    final static Image focusedImage = new ImageIcon("assets/f-block.png").getImage();
+    final static Image focusedImage = Loader.imageIcon("assets/f-block.png").getImage();
     Image unfocusedImage;
 
     public MouseListener hoverer = new MouseListener() {

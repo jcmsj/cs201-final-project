@@ -5,9 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
-
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -24,7 +22,7 @@ public class KPanel extends JPanel {
     }
 
     public KPanel(String path) {
-        this.image = new ImageIcon(path).getImage();
+        this.image = Loader.imageIcon(path).getImage();
     }
 
     @Override
