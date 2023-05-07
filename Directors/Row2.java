@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.function.Consumer;
 import Block.Block;
 import Block.Row;
+import Block.Block.STATE;
 import util.Animator;
 
 public class Row2 extends Row {
@@ -97,7 +98,7 @@ public class Row2 extends Row {
             onEnd.run();
             return;
         }
-        boolean isLeftLess = left.peek().value < right.peek().value;
+        boolean isLeftLess = left.peek().value <= right.peek().value;
         Block lower, higher;
         if (isLeftLess) {
             lower = left.poll();
@@ -147,9 +148,10 @@ public class Row2 extends Row {
 
     public void show(Block b, Runnable onEnd) {
         for (var n : next.blocks) {
-            if (b.value == n.value) {
+            if (n.state != STATE.SHOWN && b.value == n.value) {
                 n.show();
                 dimAndDefault(b, onEnd);
+                break;
             }
         }
     }
