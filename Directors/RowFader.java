@@ -35,7 +35,11 @@ public class RowFader extends Fader {
         }
         add(next);
         r2.next = next;
-        r2.derive(split, this::unlock);
+        r2.derive(split, () -> {
+            unlock();
+            if (cb != null)
+                cb.run();
+        });
         r2 = next;
         revalidate();
     }
