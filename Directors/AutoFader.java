@@ -8,11 +8,11 @@ public class AutoFader extends RowFader {
     @Override
     public void mergeSort() {
         super.mergeSort();
-        anim.schedule(t -> nextRow(() -> keepAnimating()), 500);
+        anim.schedule(t -> keepAnimating(), 500);
     }
 
     public void keepAnimating() {
-        nextRow(() -> keepAnimating());
+        nextRow(this::keepAnimating);
     }
 
     @Override

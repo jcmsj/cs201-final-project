@@ -67,9 +67,7 @@ public class RowDirector extends JPanel implements DirectorLike {
             return;
         }
         anim.every(t -> {
-            if (r.undo()) {
-
-            } else {
+            if (!r.undo()) {
                 t.cancel();
                 Aqua.syncPositions(r.blocks, blocks);
                 split /= 2;
@@ -81,9 +79,7 @@ public class RowDirector extends JPanel implements DirectorLike {
     /* Animate in each block for the row */
     public void animateRow(Row r, Runnable onEnd) {
         anim.every(t -> {
-            if (r.next()) {
-
-            } else {
+            if (!r.next()) {
                 t.cancel();
                 if (onEnd != null)
                     onEnd.run();

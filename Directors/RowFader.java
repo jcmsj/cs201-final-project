@@ -8,7 +8,7 @@ public class RowFader extends Fader {
         super(ints);
     }
 
-    Row2 r2;
+    private Row2 r2;
 
     @Override
     public void mergeSort() {
@@ -17,12 +17,21 @@ public class RowFader extends Fader {
         add(r2);
     }
 
+    private boolean animating = false;
+    public void unlock() {
+        animating = false;
+    }
+
     @Override
-    public void nextRow(Runnable onEnd) {
+    public void nextRow(Runnable cb) {
+        if (animating)
+            return;
+            
         if (split >= blocks.length) {
             System.out.println("DONE SORTING!");
             return;
         }
+        animating = true;
         add(r2);
         split *= 2;
         var next = Row2.normalMerge(split, blocks);
@@ -31,7 +40,7 @@ public class RowFader extends Fader {
         }
         add(next);
         r2.next = next;
-        r2.derive(split, onEnd);
+        r2.derive(split, this::unlock);
         r2 = next;
         revalidate();
     }
