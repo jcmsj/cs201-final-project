@@ -2,7 +2,6 @@ package App;
 
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
-import java.util.function.Consumer;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -10,9 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
 import Block.Editor;
-import Block.ACTIONS;
 import Directors.AutoFader;
 import Directors.BlockFader;
 import Directors.Fader;
@@ -29,24 +26,20 @@ public class MainPanel extends KPanel {
     ANIM_MODE mode = ANIM_MODE.ALL;
     private JPanel director;
     public JPanel shown;
-    private Consumer<int[]> consumer = new Consumer<int[]>() {
-        @Override
-        public void accept(int[] ints) {
-            remove(editor);
-            shown = director = makeEditor(mode, ints);
-            On.press(KeyEvent.VK_ESCAPE, director, ev -> {
-                remove(director);
-                addEditor();
-            });
-            add(director);
-            repaint();
-            revalidate();
-            // Important: Focus the Director
-            EventQueue.invokeLater(() -> {
-                director.requestFocusInWindow();
-            });
-        }
-    };
+
+    public void onSubmit(int[] ints) {
+        remove(editor);
+        shown = director = makeEditor(mode, ints);
+        On.press(KeyEvent.VK_ESCAPE, director, ev -> {
+            remove(director);
+            addEditor();
+        });
+        add(director);
+        repaint();
+        revalidate();
+        // Important: Focus the Director
+        EventQueue.invokeLater(director::requestFocusInWindow);
+    }
 
     public static class ModeButton extends JRadioButton {
         public ModeButton(String text, ANIM_MODE m) {
@@ -90,10 +83,7 @@ public class MainPanel extends KPanel {
         editor = new Editor();
         editor.add(Box.createVerticalStrut(50));
         editor.add(new ModePanel());
-        editor.setConsumer(consumer);
-        On.press(KeyEvent.VK_ENTER, editor, ev -> {
-            editor.doAction(ACTIONS.PLAY);
-        });
+        editor.setConsumer(this::onSubmit);
         addEditor();
     }
 
