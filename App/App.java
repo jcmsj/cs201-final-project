@@ -9,7 +9,7 @@ public class App extends JFrame {
     private MainPanel mainPanel;
     private JScrollPane scroll;
     public App() {
-        super("Sort It Out: A Merge Sort Visualizer by 4Amigos");
+        super("Sort It Out: A Merge Sort Visualizer by Quatro Amigos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Maximize screen
         setExtendedState(JFrame.MAXIMIZED_BOTH);
