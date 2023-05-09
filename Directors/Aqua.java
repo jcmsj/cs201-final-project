@@ -1,6 +1,7 @@
 package Directors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import Block.Block;
 
@@ -20,16 +21,25 @@ public class Aqua {
     }
 
     public static boolean exactlyOne(LinkedList<Integer> ints, int n) {
-        int count = 0;
+        boolean found = false;
         for (Integer x : ints) {
-            count += x.intValue() == n ? 1 : 0;
+            boolean same = x.intValue() == n;
+            if (found && same) {
+                return false;
+            }
+            else if (same) {
+                found = true;
+            }
         }
-        return count == 1;
+
+        return true;
     }
+
     public static boolean allTwos(LinkedList<Integer> ints) {
         return ints.stream().allMatch(t -> t == 2);
     }
-     /**
+
+    /**
      * Does the actual merge step with animation
      */
     public static void merge(Block[] left, Block[] right, Block[] target) {
@@ -45,6 +55,30 @@ public class Aqua {
     }
 
     /**
+     * @param blocks provider of the blocks as well as where the sorted blocks would be placed
+     * @param split
+     */
+    public static void mergeStep(Block[] blocks, int split) {
+        System.out.println("Merge by " + split);
+        ArrayList<Block> done = new ArrayList<>(blocks.length);
+        while (done.size() < blocks.length) {
+            // Split step in the actual merge sort
+            final int progress = done.size();
+            final int offset = Math.min(progress + split, blocks.length);
+            Block[] left = Arrays.copyOfRange(blocks, progress, offset);
+            final int nextOffset = Math.min(offset + split, blocks.length);
+            Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
+            Block[] sorted = new Block[left.length + right.length];
+            Aqua.merge(left, right, sorted);
+            // Add `sorted` to the previously sorted parts
+            for (Block b : sorted) {
+                // Important: duplicate block
+                done.add(b.dup());
+            }
+        }
+        done.toArray(blocks);
+    }
+    /**
      * @return target index stop
      */
     public static int putRemaining(Block[] target, int targetI, Block[] source, int index) {
@@ -53,20 +87,14 @@ public class Aqua {
         }
         return targetI;
     }
-    
-    public static void syncPositions(ArrayList<Block> sources, Block[] targets) {
-        // Sync block positions
-        for (int i = 0; i < targets.length; i++) {
-            targets[i] = sources.get(i);
-        }
-    }
+
     public static void syncPositions(Block[] sources, Block[] targets) {
         // Sync block positions
         for (int i = 0; i < targets.length; i++) {
             targets[i] = sources[i];
         }
     }
-    
+
     public static LinkedList<Block> arrayToLinkedList(Block[] ts) {
         var ll = new LinkedList<Block>();
         for (var t : ts) {

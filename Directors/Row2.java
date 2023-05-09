@@ -12,17 +12,15 @@ import util.Animator;
 public class Row2 extends Row {
     ArrayList<Block> done;
     int _split;
+    Row2 next;
 
     public Row2(Block[] blocks, int split) {
         super(blocks, split);
         this._split = split;
-        while (next()) {
-
-        }
+        /* Immediately paint blocks */
+        revealAll();
         done = new ArrayList<>(blocks.length);
     }
-
-    Row2 next;
 
     public void derive(int split, Runnable onEnd) {
         System.out.println("Split by " + split);
@@ -32,24 +30,7 @@ public class Row2 extends Row {
     public static Row2 normalMerge(int split, Block[] blocks) {
         split /= 2;
         System.out.println("Merge by " + split);
-        ArrayList<Block> done2 = new ArrayList<>(blocks.length);
-        while (done2.size() < blocks.length) {
-            // Split step in the actual merge sort
-            int progress = done2.size();
-            final int offset = Math.min(progress + split, blocks.length);
-            Block[] left = Arrays.copyOfRange(blocks, progress, offset);
-            final int nextOffset = Math.min(offset + split, blocks.length);
-            Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
-            Block[] sorted = new Block[left.length + right.length];
-            Aqua.merge(left, right, sorted);
-            // Add `sorted` to the previously sorted parts
-            for (Block b : sorted) {
-                // Important: duplicate block
-                done2.add(b.dup());
-            }
-        }
-
-        Aqua.syncPositions(done2, blocks);
+        Aqua.mergeStep(blocks, split);
         final Row2 r = new Row2(blocks, split * 2);
         return r;
     }
@@ -64,17 +45,16 @@ public class Row2 extends Row {
             final Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
             mergeStep(left, right, target -> {
                 done.addAll(target);
-                anim.schedule(() -> {
-                    deriveIter(split, done, onEnd);
-                });
+                anim.schedule(() -> deriveIter(split, done, onEnd));
             });
-        } else {
-            if (onEnd != null) {
-                onEnd.run();
-            }
+        } else if (onEnd != null) {
+            onEnd.run();
         }
     }
 
+    /**
+     * A modified version of Aqua.mergeStep for the new animation.
+     */
     public void mergeStep(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
         final LinkedList<Block> left = Aqua.arrayToLinkedList(_left);
         final LinkedList<Block> right = Aqua.arrayToLinkedList(_right);
@@ -125,10 +105,10 @@ public class Row2 extends Row {
                 // And dim the same value in the current row
                 // Repeat comparison with next set of values
                 Runnable cb = () -> compareOnce(left, right, target, onEnd);
-                if (next != null) {
-                    show(lower, cb);
-                } else {
+                if (next == null) {
                     anim.schedule(cb);
+                } else {
+                    show(lower, cb);
                 }
             });
         });
@@ -138,11 +118,9 @@ public class Row2 extends Row {
         anim.schedule(t -> {
             b.useDefaultBorder();
             b.dim();
-            anim.schedule(() -> {
-                if (onEnd != null) {
-                    onEnd.run();
-                }
-            });
+            if (onEnd != null) {
+                anim.schedule(onEnd);
+            }
         });
     }
 
@@ -158,7 +136,7 @@ public class Row2 extends Row {
 
     public void takeAll(LinkedList<Block> source, LinkedList<Block> target, Runnable after) {
         anim.every(t -> {
-            if (!takeOne(source, target)) {
+            if (!putOne(source.poll(), target)) {
                 t.cancel();
                 after.run();
             }
@@ -168,11 +146,10 @@ public class Row2 extends Row {
     /**
      * @return whether an element was taken from the source
      */
-    public boolean takeOne(LinkedList<Block> source, LinkedList<Block> target) {
-        if (source.isEmpty()) {
+    public boolean putOne(Block b, LinkedList<Block> target) {
+        if (b == null) {
             return false;
         }
-        Block b = source.poll();
         b.useGreenBorder();
         show(b, () -> dimAndDefault(b, null));
         target.add(b);

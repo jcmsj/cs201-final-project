@@ -93,7 +93,7 @@ public class Editor extends JPanel implements ActionListener {
 		btnGroup.add(submitter);
 		add(Box.createVerticalStrut(Row.X_GAP));
 		add(btnGroup);
-		// Pprevent buttonPanels from resizing
+		// Prevent buttonPanels from resizing
 		EventQueue.invokeLater(() -> {
 			btnGroup.setMaximumSize(btnGroup.getSize());
 			btnGroup.setMinimumSize(btnGroup.getSize());

@@ -2,12 +2,9 @@ package Directors;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-
 import Block.Block;
 import Block.Row;
 import util.Animator;
@@ -98,34 +95,12 @@ public class RowDirector extends JPanel implements DirectorLike {
         if (split < 0) {
             throw new IllegalArgumentException("split must be > 0, but got " + split);
         }
-
         if (split == 0) {
-            final Row r = new Row(blocks, 1);
-            add(r);
-            animateRow(r, null);
             split = 1;
-            return;
+        } else {
+            Aqua.mergeStep(blocks, split);
+            split *= 2; // Increase now
         }
-        System.out.println("Merge by " + split);
-        ArrayList<Block> done = new ArrayList<>(blocks.length);
-        while (done.size() < blocks.length) {
-            // Split step in the actual merge sort
-            int progress = done.size();
-            final int offset = Math.min(progress + split, blocks.length);
-            Block[] left = Arrays.copyOfRange(blocks, progress, offset);
-            final int nextOffset = Math.min(offset + split, blocks.length);
-            Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
-            Block[] sorted = new Block[left.length + right.length];
-            Aqua.merge(left, right, sorted);
-            // Add `sorted` to the previously sorted parts
-            for (Block b : sorted) {
-                // Important: duplicate block
-                done.add(b.dup());
-            }
-        }
-
-        Aqua.syncPositions(done, blocks);
-        split *= 2; // Increase now
         final Row r = new Row(blocks, split);
         add(r);
         animateRow(r, null);
