@@ -134,26 +134,6 @@ public class Block extends Box {
         return new Block(value);
     }
 
-    /**
-     * Similar to {@link java.util.Arrays#copyOfRange} but uses {@link Block#dup}
-     * 
-     * @see Block#dup
-     */
-    public static Block[] copyOfRange(Block[] original, int from, int to) throws IllegalArgumentException {
-        int newLength = to - from;
-        if (newLength < 0)
-            throw new IllegalArgumentException(from + " > " + to);
-
-        newLength = Math.min(original.length - from, newLength);
-        Block[] copy = new Block[newLength];
-
-        for (int i = 0; i < newLength; i++) {
-            copy[i] = original[i].dup();
-        }
-
-        return copy;
-    }
-
     public static Block[] copy(Block[] blocks) {
         var copy = new Block[blocks.length];
         for (int i = 0; i < blocks.length; i++) {

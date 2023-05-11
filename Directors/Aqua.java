@@ -10,36 +10,6 @@ import Block.Block;
  */
 public class Aqua {
     /**
-     * Makes a true clone of the indices
-     */
-    public static LinkedList<Integer> dup(LinkedList<Integer> indices) {
-        LinkedList<Integer> copy = new LinkedList<>();
-        for (var index : indices) {
-            copy.add(index);
-        }
-        return copy;
-    }
-
-    public static boolean exactlyOne(LinkedList<Integer> ints, int n) {
-        boolean found = false;
-        for (Integer x : ints) {
-            boolean same = x.intValue() == n;
-            if (found && same) {
-                return false;
-            }
-            else if (same) {
-                found = true;
-            }
-        }
-
-        return true;
-    }
-
-    public static boolean allTwos(LinkedList<Integer> ints) {
-        return ints.stream().allMatch(t -> t == 2);
-    }
-
-    /**
      * Does the actual merge step with animation
      */
     public static void merge(Block[] left, Block[] right, Block[] target) {

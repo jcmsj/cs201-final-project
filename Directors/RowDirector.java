@@ -47,17 +47,6 @@ public class RowDirector extends JPanel implements DirectorLike {
                 t -> undoLastRow());
     }
 
-    public int calcSplit() {
-        return calcSplit(blocks.length);
-    }
-
-    /**
-     * Div by 2 but change 0 to 1.
-     */
-    public static int calcSplit(int n) {
-        return Math.max(n / 2, 1);
-    }
-
     public void undoLastRow() {
         Row r = rows.pollLast();
         if (r == null) {
@@ -89,13 +78,7 @@ public class RowDirector extends JPanel implements DirectorLike {
     boolean shouldMerge = false;
 
     public void mergeStep() {
-        if (split > blocks.length)
-            return;
-
-        if (split < 0) {
-            throw new IllegalArgumentException("split must be > 0, but got " + split);
-        }
-        if (split == 0) {
+        if (split <= 0) {
             split = 1;
         } else {
             Aqua.mergeStep(blocks, split);
