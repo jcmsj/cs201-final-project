@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.function.Consumer;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import Style.Style;
@@ -174,11 +175,11 @@ public class Editor extends JPanel implements ActionListener {
 		if (textFields.peekLast() == deletable) {
 			textFields.removeLast();
 			nextDeletable = textFields.peekLast();
-			// select the first child
+		// select the first child
 		} else if (textFields.peekFirst() == deletable) {
 			textFields.removeFirst();
 			nextDeletable = textFields.peekFirst();
-			// select the next sibling
+		// select the next sibling
 		} else {
 			nextDeletable = textFields.get(textFields.indexOf(deletable) + 1);
 			textFields.remove(deletable);
@@ -190,12 +191,22 @@ public class Editor extends JPanel implements ActionListener {
 	public int[] makeInts() {
 		int[] ints = new int[textFields.size()];
 		for (int i = 0; i < textFields.size(); i++) {
-			String string = textFields.get(i).input.getText();
-			ints[i] = Integer.parseInt(string);
+			String string = textFields.get(i).input.getText().trim();
+			try {
+				ints[i] = Integer.parseInt(string);
+			} catch (NumberFormatException e) {
+				showErrorThenFocus(string.length() == 0, i);
+				throw e;
+			}
 		}
 		return ints;
 	}
 
+	public void showErrorThenFocus(boolean isEmpty, int errorIndex) {
+		final String msg = isEmpty ? "A block can't be empty!": "Please input only integer values in the block!";
+		JOptionPane.showMessageDialog(this, msg, "Invalid Input", JOptionPane.ERROR_MESSAGE);
+		textFields.get(errorIndex).edit();
+	}
 	public void setConsumer(Consumer<int[]> consumer) {
 		this.consumer = consumer;
 	}

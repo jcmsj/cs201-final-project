@@ -75,5 +75,16 @@ public class Style {
         UIManager.put("ToolTip.background", wine2);
         UIManager.put("ToolTip.font", alagard.deriveFont(20f));
         UIManager.put("ToolTip.border", BorderFactory.createLineBorder(wine, 1));
+
+        //ErrorPane
+        UIManager.put("OptionPane.errorIcon", Loader.imageIcon("assets/x.png"));
+        UIManager.put("OptionPane.font", alagard.deriveFont(50f));
+        UIManager.put("OptionPane.foreground", yellowish);
+        UIManager.put("OptionPane.background", wine);
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("OptionPane.messageFont", alagard.deriveFont(40f));
+        UIManager.put("OptionPane.errorDialog.titlePane.background", wine2);
+        UIManager.put("OptionPane.buttonFont", alagard.deriveFont(40f));
+
     }
 }
