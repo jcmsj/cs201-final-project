@@ -9,7 +9,6 @@ import Style.Style;
 
 /* A movable block with a number */
 public class Block extends Box {
-    public static float DEFAULT_FONT_SIZE = 40f;
     public int value;
     static final int side = 15;
     public Color shownColor;
@@ -27,7 +26,7 @@ public class Block extends Box {
     public STATE state = STATE.SHOWN;
 
     public Block(int value) {
-        this(value, DEFAULT_FONT_SIZE);
+        this(value, GLOBAL_FONT_SIZE);
     }
 
     public Block(int value, float fontSize) {
@@ -38,6 +37,7 @@ public class Block extends Box {
         setBorder(DEFAULT_BORDER);
     }
 
+  
     public void hideMe() {
         state = STATE.INVI;
         label.setForeground(Style.DARK_RED);
@@ -91,7 +91,6 @@ public class Block extends Box {
                 break;
         }
     }
-
 
     public void useGreenBorder() {
         setBorder(greenB);

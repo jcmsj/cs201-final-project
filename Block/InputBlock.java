@@ -5,18 +5,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+
 import util.KPanel;
 
 public class InputBlock extends Box {
     public final JTextField input;
+    static final Border border = new EmptyBorder(25, 8, 25, 8);
 
     public InputBlock() {
         setOpaque(false);
-        setBorder(new EmptyBorder(BlockLabel.DEFAULT_BORDER_SIZE, 8, BlockLabel.DEFAULT_BORDER_SIZE, 8));
+        setBorder(border);
         input = new JTextField(2);
         input.setHorizontalAlignment(JTextField.CENTER);
-        input.setFont(input.getFont().deriveFont(40f));
+        input.setFont(input.getFont().deriveFont(Block.GLOBAL_FONT_SIZE));
         input.setBorder(KPanel.squareBorder(0));
         add(input);
         input.addMouseListener(hoverer);

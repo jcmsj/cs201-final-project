@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -21,6 +22,9 @@ public class KPanel extends JPanel {
         On.press(keyCode, this, cb);
     }
 
+    public KPanel() {
+
+    }
     public KPanel(String path) {
         this.image = Loader.imageIcon(path).getImage();
     }
@@ -46,5 +50,16 @@ public class KPanel extends JPanel {
 
     public static CompoundBorder paddedBorder(Color c, int thickness, int pad) {
         return paddedBorder(c, thickness, pad, pad, pad, pad);
+    }
+
+    /**
+     * @implNote Assure that the component has been added before calling
+     */
+    public void preventResize() {
+        EventQueue.invokeLater(() -> {
+            setMaximumSize(getSize());
+            setMinimumSize(getSize());
+            setPreferredSize(getSize());
+        });
     }
 }

@@ -1,6 +1,8 @@
 package App;
 
 import java.awt.EventQueue;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -9,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import Block.Block;
 import Block.Editor;
 import Directors.AutoFader;
 import Directors.BlockFader;
@@ -50,7 +54,7 @@ public class MainPanel extends KPanel {
         }
     }
 
-    public class ModePanel extends JPanel {
+    public class ModePanel extends KPanel {
         public ModePanel() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setAlignmentX(CENTER_ALIGNMENT);
@@ -74,6 +78,7 @@ public class MainPanel extends KPanel {
             });
             list.setSelectedIndex(0);
             add(list);
+            preventResize();
         }
     }
 
@@ -82,11 +87,42 @@ public class MainPanel extends KPanel {
         setBorder(KPanel.squareBorder(DEFAULT_BORDER_SIZE));
         editor = new Editor();
         editor.add(Box.createVerticalStrut(50));
-        editor.add(new ModePanel());
+        var modePanel = new ModePanel();
+        modePanel.add(new SizeChanger());
+        modePanel.add(Box.createVerticalStrut(10));
+        editor.add(modePanel);
         editor.setConsumer(this::onSubmit);
         addEditor();
     }
 
+    public class SizeChanger extends JPanel {
+        public final JTextField input;
+        public SizeChanger() {
+            var label = new JLabel("Block Font size: ");
+            label.setFont(getFont().deriveFont(30f));
+            input = new JTextField("" + (int) Block.GLOBAL_FONT_SIZE, 3);
+            input.setBorder(KPanel.paddedBorder(getBackground(), 1, 3));
+            input.setFont(getFont().deriveFont(30f));
+            input.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    // pass
+                }
+                @Override
+                public void focusLost(FocusEvent e) {
+                    int newSize = Integer.parseInt(input.getText().trim());
+                    if (newSize > 0)  {
+                        Block.GLOBAL_FONT_SIZE = newSize;
+                    } else {
+                        input.setText("" + (int) Block.GLOBAL_FONT_SIZE);
+                    }
+                }
+            });
+            add(label);
+            add(input);
+
+        }
+    }
     public void setMode(ANIM_MODE m) {
         mode = m;
     }

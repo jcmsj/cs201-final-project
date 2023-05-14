@@ -1,7 +1,6 @@
 package Block;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -17,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import Style.Style;
 import util.IconButton;
+import util.KPanel;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 
@@ -25,7 +26,7 @@ public class Editor extends JPanel implements ActionListener {
 	JButton adder;
 	JButton remover;
 	public JButton submitter;
-	LinkedList<InputBlock> textFields;
+	public LinkedList<InputBlock> textFields;
 	private JPanel removerRow;
 	public PButton resetter;
 	int MIN_TEXT_FIELDS = 2;
@@ -89,17 +90,14 @@ public class Editor extends JPanel implements ActionListener {
 
 			add(removerRow);
 		}
-		JPanel btnGroup = new JPanel(new GridLayout(1, 3));
+		KPanel btnGroup = new KPanel();
+		btnGroup.setLayout(new GridLayout(1, 3));
 		btnGroup.add(resetter);
 		btnGroup.add(submitter);
 		add(Box.createVerticalStrut(Row.X_GAP));
 		add(btnGroup);
 		// Prevent buttonPanels from resizing
-		EventQueue.invokeLater(() -> {
-			btnGroup.setMaximumSize(btnGroup.getSize());
-			btnGroup.setMinimumSize(btnGroup.getSize());
-			btnGroup.setPreferredSize(btnGroup.getSize());
-		});
+		btnGroup.preventResize();
 		adder.addActionListener(this);
 		remover.addActionListener(this);
 		submitter.addActionListener(this);

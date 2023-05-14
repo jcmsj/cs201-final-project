@@ -7,7 +7,7 @@ public class RowFader extends Fader {
     public RowFader(int[] ints) {
         super(ints);
     }
-
+ 
     private Row2 r2;
 
     @Override

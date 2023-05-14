@@ -12,7 +12,8 @@ import util.Loader;
 public class Box extends KPanel {
     final static Image focusedImage = Loader.imageIcon("assets/f-block.png").getImage();
     Image unfocusedImage;
-
+    public static float DEFAULT_FONT_SIZE = 40f;
+    public static float GLOBAL_FONT_SIZE = DEFAULT_FONT_SIZE;
     public MouseListener hoverer = new MouseListener() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -49,6 +50,10 @@ public class Box extends KPanel {
         repaint();
     }
     
+    public void updateFont() {
+        setFont(getFont().deriveFont(GLOBAL_FONT_SIZE));
+    }
+
     public Box() {
         super("assets/block.png");
         unfocusedImage = image;
