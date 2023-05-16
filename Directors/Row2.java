@@ -3,7 +3,7 @@ package Directors;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 import Block.Block;
 import Block.Row;
 import Block.Block.STATE;
@@ -22,9 +22,10 @@ public class Row2 extends Row {
         done = new ArrayList<>(blocks.length);
     }
 
-    public void derive(int split, Runnable onEnd) {
+    public CompletableFuture<Void> derive(int split) {
         System.out.println("Split by " + split);
-        deriveIter(split / 2, done, onEnd);
+        var s = new CompletableFuture<Void>();
+        return deriveIter(split / 2, done, s);
     }
 
     public static Row2 normalMerge(int split, Block[] blocks) {
@@ -35,7 +36,8 @@ public class Row2 extends Row {
         return r;
     }
 
-    public void deriveIter(int split, ArrayList<Block> done, Runnable onEnd) {
+
+    public CompletableFuture<Void> deriveIter(int split, ArrayList<Block> done, CompletableFuture<Void>  onEnd) {
         if (done.size() < blocks.length) {
             // Split step in the actual merge sort
             int progress = done.size();
@@ -43,40 +45,43 @@ public class Row2 extends Row {
             final Block[] left = Arrays.copyOfRange(blocks, progress, offset);
             final int nextOffset = Math.min(offset + split, blocks.length);
             final Block[] right = Arrays.copyOfRange(blocks, offset, nextOffset);
-            mergeStep(left, right, target -> {
+            mergeStep(left, right).thenAccept(target -> {
                 done.addAll(target);
                 anim.schedule(() -> deriveIter(split, done, onEnd));
             });
-        } else if (onEnd != null) {
-            onEnd.run();
+        } else {
+            onEnd.complete(null);
         }
+
+        return onEnd;
     }
 
     /**
      * A modified version of Aqua.mergeStep for the new animation.
      */
-    public void mergeStep(Block[] _left, Block[] _right, Consumer<LinkedList<Block>> onEnd) {
+    public CompletableFuture<LinkedList<Block>> mergeStep(Block[] _left, Block[] _right) {
         final LinkedList<Block> left = Aqua.arrayToLinkedList(_left);
         final LinkedList<Block> right = Aqua.arrayToLinkedList(_right);
         final LinkedList<Block> target = new LinkedList<Block>();
-
-        compareOnce(left, right, target, () -> {
-            takeAll(left, target, () -> {
-                takeAll(right, target, () -> onEnd.accept(target));
-            });
-        });
+        var s = new CompletableFuture<LinkedList<Block>>();
+        var onCompareEnd = new CompletableFuture<Void>();
+        compareOnce(left, right, target, onCompareEnd)
+                .thenRun(() -> takeAll(left, target)
+                        .thenRun(() -> takeAll(right, target)
+                                .thenRun(() -> s.complete(target))));
+        return s;
     }
 
     static Animator anim = new Animator(200);
 
-    public void compareOnce(
+    public CompletableFuture<Void> compareOnce(
             LinkedList<Block> left,
             LinkedList<Block> right,
             LinkedList<Block> target,
-            Runnable onEnd) {
+            CompletableFuture<Void> onEnd) {
         if (left.size() <= 0 || right.size() <= 0) {
-            onEnd.run();
-            return;
+            onEnd.complete(null);
+            return onEnd;
         }
         boolean isLeftLess = left.peek().value <= right.peek().value;
         Block lower, higher;
@@ -99,7 +104,6 @@ public class Row2 extends Row {
         anim.schedule(() -> {
             // Same w/ higher value but with red
             higher.useRedBorder();
-
             anim.schedule(() -> {
                 // Show the equivalent value in the next row
                 // And dim the same value in the current row
@@ -112,6 +116,8 @@ public class Row2 extends Row {
                 }
             });
         });
+
+        return onEnd;
     }
 
     public void dimAndDefault(Block b, Runnable onEnd) {
@@ -134,13 +140,15 @@ public class Row2 extends Row {
         }
     }
 
-    public void takeAll(LinkedList<Block> source, LinkedList<Block> target, Runnable after) {
+    public CompletableFuture<Void> takeAll(LinkedList<Block> source, LinkedList<Block> target) {
+        var s = new CompletableFuture<Void>();
         anim.every(t -> {
             if (!putOne(source.poll(), target)) {
                 t.cancel();
-                after.run();
+                s.complete(null);
             }
         }, 0);
+        return s;
     }
 
     /**

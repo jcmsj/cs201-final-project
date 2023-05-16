@@ -35,7 +35,7 @@ public class RowFader extends Fader {
         }
         add(next);
         r2.next = next;
-        r2.derive(split, () -> {
+        r2.derive(split).thenRun(() -> {
             unlock();
             if (cb != null)
                 cb.run();
